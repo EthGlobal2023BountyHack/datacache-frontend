@@ -29,6 +29,8 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
   const [isNewNotification, setIsNewNotification] = useState(true);
 
   useEffect(() => {
+    console.log("user", user)
+
     if (!isHeaderTransparent) return;
     scrollY.on('change', (latest) => {
       if (latest < 1) {
@@ -75,20 +77,20 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
         <div className="flex justify-end w-1/2 lg:w-1/4 items-center">
           {user?.id ? (
             <div className="flex flex-row items-center relative">
-              <div className="block lg:hidden xl:block absolute top-[5.5px] sm:top-[12.5px] xl:top-[13.5px] -right-[40.5px] xl:left-[21.5px] rounded-full w-2 h-2 bg-hot-pink"></div>
-              <BellIcon width={32} height={32} className="hidden xl:block mr-[36px]" />
+              {/* <div className="block lg:hidden xl:block absolute top-[5.5px] sm:top-[12.5px] xl:top-[13.5px] -right-[40.5px] xl:left-[21.5px] rounded-full w-2 h-2 bg-hot-pink"></div>
+              <BellIcon width={32} height={32} className="hidden xl:block mr-[36px]" /> */}
               <Dropdown
                 className="font-bold w-[111px] sm:w-[239px]"
-                text={user?.displayName || user?.email ? `${user?.displayName || user?.email}` : `...`}
+                text={user?.displayName || user?.ethAddress || user?.email}
                 options={[
                   {
                     label: 'Log Out',
                     callback: () => handleLogOut(),
                   },
-                  {
-                    label: 'Option 2',
-                    callback: () => console.log('option2'),
-                  },
+                  // {
+                  //   label: 'Option 2',
+                  //   callback: () => console.log('option2'),
+                  // },
                 ]}
               />
             </div>
