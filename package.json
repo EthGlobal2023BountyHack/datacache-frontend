@@ -15,6 +15,7 @@
     "@planetscale/database": "^1.7.0",
     "@safe-global/safe-deployments": "^1.23.0",
     "@vercel/analytics": "^0.1.10",
+    "@worldcoin/idkit": "^0.5.1",
     "bcrypt": "^5.1.0",
     "classnames": "^2.3.1",
     "connectkit": "^1.4.0",
