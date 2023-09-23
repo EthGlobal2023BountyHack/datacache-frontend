@@ -29,8 +29,7 @@ const Lander = ({ user }) => {
 
   useEffect(() => {
     (async function () {
-      if (!user) return;
-
+      if (!user?.ethAddress) return;
       const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_PROVIDER_URL);
       const ensName = await provider.lookupAddress(user?.ethAddress);
       setEnsName(ensName);

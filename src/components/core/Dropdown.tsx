@@ -12,9 +12,9 @@ const Dropdown = ({ text, options = [], className = '', ...rest }) => {
     <div className={classnames('relative', className, 'text-base')} {...rest}>
       <button
         onClick={handleToggleDropdown}
-        className="flex items-center justify-between border w-full rounded-xl h-[40px] sm:h-[56px]"
+        className="flex items-center justify-between border-[1px] border-solid border-[#252525] w-full h-[40px] sm:h-[56px]"
       >
-        <div className="flex items-center px-2 border-r w-[80%] h-full">
+        <div className="flex items-center px-2 border-r-[1px] border-solid border-[#252525] w-[80%] h-full">
           <div className="rounded-full w-2 h-2 bg-lime ml-1 mr-2 shrink-0 "></div>
           <span className="truncate overflow-hidden whitespace-nowrap">{text}</span>
         </div>
@@ -30,7 +30,7 @@ const Dropdown = ({ text, options = [], className = '', ...rest }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 w-full border bg-primary-dark hover:text-black">
+        <div className="absolute top-full w-full border-x-[1px] border-b-[1px] border-solid border-[#252525] bg-primary-dark hover:text-black bg-black">
           {options.map((option, index) => (
             <button
               key={index}
