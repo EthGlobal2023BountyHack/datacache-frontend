@@ -24,6 +24,22 @@ const Lander = ({ user }) => {
     }
   ])
 
+  const renderIcon = (icon) => {
+    const Icon = icon
+
+    return (
+      <Icon size={35}/>
+    )
+  }
+
+  const dotFormatter = (x) => {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  const kFormatter = (num) => {
+    return Math.abs(num) > 999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(1)) + 'K' : Math.sign(num)*Math.abs(num)
+}
+
   const tempTags = ["> 18", "opensea user", "hiker", "programer", "nft degen", "investor"]
 
   useEffect(() => {
@@ -132,17 +148,17 @@ const Lander = ({ user }) => {
               <div className='flex justify-between border-[1px] border-solid border-[#252525] p-3 '>
                 <div>
                   <p className='text-xxs'>Total payout</p>
-                  <p className='text-lg'>{bounty.payout.total} {bounty.payout.type}</p>
+                  <p className='text-lg'>{kFormatter(bounty.payout.total)} {bounty.payout.type}</p>
                 </div>
                 <div>
                   <p className='text-xxs'>Participants needed</p>
-                  <p className='text-lg'>{bounty.neededParticipants}</p>
+                  <p className='text-lg'>{dotFormatter(bounty.neededParticipants)}</p>
                 </div>
               </div>
               <div className='flex justify-between items-center'>
                 <p>From {bounty.from}</p>
                 <div className='bg-yellow-500 p-2 rounded-sm'>
-                  
+                  {renderIcon(bounty.icon)}
                 </div>
               </div>
             </div>
