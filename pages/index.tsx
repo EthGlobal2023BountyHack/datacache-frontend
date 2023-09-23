@@ -21,7 +21,77 @@ const Lander = ({ user }) => {
       from: "Microsoft",
       logoUrl: "",
       icon: FaMicrosoft
-    }
+    },
+    {
+      id: 1,
+      title: "Web3 Gaming Audience",
+      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
+      totalJoined: 8123,
+      payout: {
+        total: 100000,
+        type: "USDC"
+      },
+      neededParticipants: 10000,
+      from: "Microsoft",
+      logoUrl: "",
+      icon: FaMicrosoft
+    },
+    {
+      id: 1,
+      title: "Web3 Gaming Audience",
+      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
+      totalJoined: 8123,
+      payout: {
+        total: 100000,
+        type: "USDC"
+      },
+      neededParticipants: 10000,
+      from: "Microsoft",
+      logoUrl: "",
+      icon: FaMicrosoft
+    },
+    {
+      id: 1,
+      title: "Web3 Gaming Audience",
+      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
+      totalJoined: 8123,
+      payout: {
+        total: 100000,
+        type: "USDC"
+      },
+      neededParticipants: 10000,
+      from: "Microsoft",
+      logoUrl: "",
+      icon: FaMicrosoft
+    },
+    {
+      id: 1,
+      title: "Web3 Gaming Audience",
+      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
+      totalJoined: 8123,
+      payout: {
+        total: 100000,
+        type: "USDC"
+      },
+      neededParticipants: 10000,
+      from: "Microsoft",
+      logoUrl: "",
+      icon: FaMicrosoft
+    },
+    {
+      id: 1,
+      title: "Web3 Gaming Audience",
+      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
+      totalJoined: 8123,
+      payout: {
+        total: 100000,
+        type: "USDC"
+      },
+      neededParticipants: 10000,
+      from: "Microsoft",
+      logoUrl: "",
+      icon: FaMicrosoft
+    },
   ])
 
   const renderIcon = (icon) => {
@@ -44,22 +114,25 @@ const Lander = ({ user }) => {
 
   useEffect(() => {
     (async function () {
+      if (!user) return
+
       const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_PROVIDER_URL);
       const ensName = await provider.lookupAddress(user?.ethAddress);
       setEnsName(ensName)
     })();
-  }, [])
+  }, [user])
 
   return (
     <Layout isHeaderTransparent={true}>
-      <section className="px-20 flex gap-5">
-        <div className="flex border-[1px] border-solid border-[#252525] w-1/4 flex-col py-10 text-zinc-500 items-center">
-          <div className='pb-4'>
+      <section className="px-20 grid grid-cols-12 gap-6">
+        <div className="flex border-[1px] border-solid border-[#252525] flex-col py-10 text-zinc-500 items-center col-span-3 h-fit">
+          <div className='flex flex-col pb-4 items-center'>
             <div className='pb-3'>
-              <FaUserCircle size={150} color='grey'/>
+              <FaUserCircle size={150} color='white'/>
             </div>
             <p className='font-bold text-lg'>{ ensName }</p>
             <p className={classnames(
+              "text-white",
               { 'text-sm': ensName !== null },
               { 'text-lg font-bold': ensName === null }
             )}>
@@ -105,18 +178,18 @@ const Lander = ({ user }) => {
               </Button>
             </div>
           </div>
-          <div className='flex gap-3 flex-wrap px-3 justify-center'>
+          <div className='flex gap-1 flex-wrap px-3 justify-center'>
             {tempTags.slice(0, 5).map(tag => (
-              <p className='bg-red-500 px-4 text-white'>{tag}</p>
+              <p className='border-[1px] border-solid border-[#252525] px-4 text-white'>{tag}</p>
             ))}
             {tempTags.length > 5 && (
-              <p className='bg-red-500 px-4 text-white'>{tempTags.length - 5}+</p>
+              <p className='border-[1px] border-solid border-[#252525] px-4 text-white'>{tempTags.length - 5}+</p>
             )}
           </div>
         </div>
-        <div className="flex-grow">
+        <div className="flex gap-3 flex-wrap items-center justify-center col-span-9">
           {bounties.map(bounty => (
-            <div className='flex flex-col gap-4 w-1/3 bg-[#131313] p-6'>
+            <div className='flex flex-col gap-4 w-3/12 bg-[#131313] p-6 flex-grow border-[1px] border-solid border-[#252525]'>
               <h2 className='font-bold text-2xl'>{ bounty.title }</h2>
               <p>{ bounty.description }</p>
               <div className='flex justify-between items-center'>

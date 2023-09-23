@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Analytics } from '@vercel/analytics/react';
 import { WagmiConfig, createConfig } from 'wagmi';
 import { ConnectKitProvider, SIWESession, getDefaultConfig } from 'connectkit';
 import { useRouter } from 'next/router';
@@ -189,7 +188,6 @@ const WithUser = ({ Component, route, ...props }) => {
         rtl={false}
         closeOnClick
       />
-      <Analytics />
     </UserContext.Provider>
   );
 };

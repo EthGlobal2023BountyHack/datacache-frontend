@@ -52,13 +52,13 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
     <ErrorBoundary fallbackRender={fallbackRender}>
       <div
         className={classnames(
-          'absolute top-0 flex h-[88px] w-full flex-row items-center justify-between bg-primary-dark px-6 lg:px-10 transition-all duration-200 text-white',
+          'absolute top-0 flex h-[88px] w-full flex-row items-center justify-between bg-[#131313] px-6 lg:px-10 transition-all duration-200 text-white',
           bgHidden ? 'bg-opacity-0' : 'shadow-xl',
         )}
       >
         {/* Left Section */}
         <div className="flex shrink-0 w-1/2 sm:w-1/4">
-          <h1 className="uppercase text-lg font-black">DATACACHE</h1>
+          <h1 className="text-lg font-black">DataCache</h1>
         </div>
         {/* Center Section */}
         <div className="hidden lg:flex justify-center flex-grow w-1/2">
