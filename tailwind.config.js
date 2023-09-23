@@ -43,8 +43,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        header: ['Space Grotesk', 'sans-serif'],
-        paragraph: ['Space Grotesk', 'sans-serif'],
+        header: ['Saira', 'sans-serif'],
+        paragraph: ['Saira', 'sans-serif'],
       },
       fontSize: {
         xxs: '0.7rem',
