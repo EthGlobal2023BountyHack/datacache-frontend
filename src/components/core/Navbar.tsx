@@ -6,6 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { UserContext } from '@/context/UserContext';
 import { MdNotifications as BellIcon, MdMenu as HamburgerMenu } from 'react-icons/md';
 import Dropdown from './Dropdown';
+import { useRouter } from 'next/router'
 
 function fallbackRender({ error }) {
   return (
@@ -27,6 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
   const { disconnect } = useDisconnect();
   const { scrollY } = useScroll();
   const [isNewNotification, setIsNewNotification] = useState(true);
+  const router = useRouter()
 
   useEffect(() => {
     console.log("user", user)
@@ -62,13 +64,13 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
         </div>
         {/* Center Section */}
         <div className="hidden lg:flex justify-center flex-grow w-1/2">
-          <Button onClick={() => {}} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
+          <Button onClick={() => { router.push('/') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
             Home
           </Button>
-          <Button onClick={() => {}} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
+          <Button onClick={() => { router.push('/bounties') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
             Bounties
           </Button>
-          <Button onClick={() => {}} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
+          <Button onClick={() => { router.push('/dashboard') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
             Dashboard
           </Button>
         </div>
