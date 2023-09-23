@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { MongoClient } from 'mongodb';
 
 export const config = {
   api: {
@@ -23,7 +24,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Verify
     credential_type: req.body.credential_type,
     action: req.body.action,
     signal: req.body.signal,
+    ethAddress: req.body.ethAddress,
   };
+  console.log(reqBody);
+
   console.log('Sending request to World ID /verify endpoint:\n', reqBody);
   fetch(verifyEndpoint, {
     method: 'POST',
@@ -32,16 +36,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Verify
     },
     body: JSON.stringify(reqBody),
   }).then((verifyRes) => {
-    verifyRes.json().then((wldResponse) => {
+    verifyRes.json().then(async (wldResponse) => {
       console.log(`Received ${verifyRes.status} response from World ID /verify endpoint:\n`, wldResponse);
       if (verifyRes.status == 200) {
         // This is where you should perform backend actions based on the verified credential, such as setting a user as "verified" in a database
         // For this example, we'll just return a 200 response and console.log the verified credential
         console.log("Credential verified! This user's nullifier hash is: ", wldResponse.nullifier_hash);
+
+        console.log('sending to mongo');
+
+        await updateMongoWithTag(reqBody.ethAddress);
+
         res.status(verifyRes.status).send({
           code: 'success',
           detail: 'This action verified correctly!',
         });
+
         //   resolve(void 0);
       } else {
         // This is where you should handle errors from the World ID /verify endpoint. Usually these errors are due to an invalid credential or a credential that has already been used.
@@ -51,4 +61,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Verify
     });
   });
   //   });
+}
+
+async function updateMongoWithTag(ethAddress: string) {
+  const mongoClient = new MongoClient(process.env.MONGODB_URL);
+  const db = mongoClient.db('advershare');
+  const col = db.collection('datacache_tag');
+
+  await col.updateOne(
+    {
+      _id: ethAddress as any,
+    },
+    {
+      $addToSet: {
+        tags: { name: 'Worldcoin Verified', origin: 'Worldcoin' },
+      },
+    },
+    { upsert: true },
+  );
 }

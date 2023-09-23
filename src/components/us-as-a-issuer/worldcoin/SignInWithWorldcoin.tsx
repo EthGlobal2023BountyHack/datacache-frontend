@@ -1,12 +1,22 @@
 import { CredentialType, IDKitWidget } from '@worldcoin/idkit';
 import type { ISuccessResult } from '@worldcoin/idkit';
-import type { VerifyReply } from '../../../../pages/api/verify';
-import { Layout } from '@/components';
+import type { VerifyReply } from '../../../../pages/api/worldcoin/verify';
+import { toast } from 'react-toastify';
+import { useContext } from 'react';
+import { UserContext } from '@/context/UserContext';
 
 export default function SignInWithWorldcoin() {
+  /*
+  const [{ user }, setUser] = useContext(UserContext);
+  */
+
+  const user = {
+    ethAddress: '0x1234567890123456789012345678901234567890',
+  };
+
   const onSuccess = (result: ISuccessResult) => {
     // This is where you should perform frontend actions once a user has been verified, such as redirecting to a new page
-    window.alert('Successfully verified with World ID! Your nullifier hash is: ' + result.nullifier_hash);
+    toast('Successfully Verified with Worldcoin');
   };
 
   const handleProof = async (result: ISuccessResult) => {
@@ -18,9 +28,10 @@ export default function SignInWithWorldcoin() {
       credential_type: result.credential_type,
       action: process.env.NEXT_PUBLIC_WLD_ACTION_NAME,
       signal: '',
+      ethAddress: user.ethAddress,
     };
     console.log('Sending proof to backend for verification:\n', JSON.stringify(reqBody)); // Log the proof being sent to our backend for visibility
-    const res: Response = await fetch('/api/verify', {
+    const res: Response = await fetch('/api/worldcoin/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,23 +47,21 @@ export default function SignInWithWorldcoin() {
   };
 
   return (
-    <div>
-      <div className="flex flex-col items-center justify-center align-middle h-screen">
-        <IDKitWidget
-          action={process.env.NEXT_PUBLIC_WLD_ACTION_NAME!}
-          app_id={process.env.NEXT_PUBLIC_WLD_APP_ID!}
-          onSuccess={onSuccess}
-          handleVerify={handleProof}
-          credential_types={[CredentialType.Orb, CredentialType.Phone]}
-          autoClose
-        >
-          {({ open }) => (
-            <button className="border border-black rounded-md" onClick={open}>
-              <div className="mx-3 my-1">Verify with World ID</div>
-            </button>
-          )}
-        </IDKitWidget>
-      </div>
-    </div>
+    user && (
+      <IDKitWidget
+        action={process.env.NEXT_PUBLIC_WLD_ACTION_NAME!}
+        app_id={process.env.NEXT_PUBLIC_WLD_APP_ID!}
+        onSuccess={onSuccess}
+        handleVerify={handleProof}
+        credential_types={[CredentialType.Orb, CredentialType.Phone]}
+        autoClose
+      >
+        {({ open }) => (
+          <button className="border border-black rounded-md" onClick={open}>
+            <div className="mx-3 my-1">Verify with World ID</div>
+          </button>
+        )}
+      </IDKitWidget>
+    )
   );
 }
