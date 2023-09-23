@@ -58,7 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
       >
         {/* Left Section */}
         <div className="flex shrink-0 w-1/2 sm:w-1/4">
-          <h1 className="text-lg font-black">DataCache</h1>
+          <h1 className="uppercase text-lg font-black">DataCache</h1>
         </div>
         {/* Center Section */}
         <div className="hidden lg:flex justify-center flex-grow w-1/2">
@@ -96,12 +96,26 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
             </div>
           ) : (
             <div className="flex flex-row gap-3">
-              <Button className="hidden lg:block" onClick={() => {}} size="sm" variant="secondary">
+              <button
+                className='border-[1px] border-solid border-[#252525] px-5 py-1'
+                onClick={() => { 
+
+                }}
+              >
+                Sign up
+              </button>
+              <button
+                className='border-[1px] border-solid border-[#252525] px-5 py-1 bg-[#131313]'
+                onClick={openLoginModal}
+              >
+                Log In
+              </button>
+              {/* <Button className="hidden lg:block" onClick={() => {}} size="sm" variant="secondary">
                 Sign Up
               </Button>
               <Button onClick={openLoginModal} className="" size="sm">
                 Log In
-              </Button>
+              </Button> */}
             </div>
           )}
           <div className="lg:hidden ml-[8px]">

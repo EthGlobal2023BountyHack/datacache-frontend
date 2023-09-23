@@ -30,7 +30,7 @@ const Dropdown = ({ text, options = [], className = '', ...rest }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full w-full border-x-[1px] border-b-[1px] border-solid border-[#252525] bg-primary-dark hover:text-black">
+        <div className="absolute top-full w-full border-x-[1px] border-b-[1px] border-solid border-[#252525] bg-primary-dark hover:text-black bg-black">
           {options.map((option, index) => (
             <button
               key={index}
