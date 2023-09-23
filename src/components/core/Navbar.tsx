@@ -66,7 +66,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
         <div className="hidden lg:flex justify-center flex-grow w-1/2 gap-5 h-[100%]">
           <button
             className={classnames(
-              { 'border-b-[1px]': router.pathname === '/' }
+              { 'border-b-[1px] pt-[1px]': router.pathname === '/' }
             )}
             onClick={() => { router.push('/') }}
           >
@@ -74,7 +74,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
           </button>
           <button
             className={classnames(
-              { 'border-b-[1px]': router.pathname === '/bounties' }
+              { 'border-b-[1px] pt-[1px]': router.pathname === '/bounties' }
             )}
             onClick={() => { router.push('/bounties') }}
           >
@@ -82,7 +82,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
           </button>
           <button
             className={classnames(
-              { 'border-b-[1px]': router.pathname === '/dashboard' }
+              { 'border-b-[1px] pt-[1px]': router.pathname === '/dashboard' }
             )}
             onClick={() => { router.push('/dashboard') }}
           >
