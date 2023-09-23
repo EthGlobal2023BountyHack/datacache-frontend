@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Mandatory changes in Shopify
 
-## Getting Started
+We do these actions to show correct information about your store
 
-First, run the development server:
+## Steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. From the Shopify admin, go to **Settings > Notifications**.
+2. In the **Customers notifications** section, click the **Customer account welcome** email template.
+3. In the template editor, update the **storefront link** to point to our storefront's account activation page.
+
+Pass the new URL instead of URL `http://localhost:3000` by replacing to your store domain in two places. For example:
+
+Before:
+
+```html
+<h1 class="shop-name__text">
+  <a href="http://localhost:3000/info/account-activated">{{ shop.name }}</a>
+</h1>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```html
+<td class="button__cell">
+  <a href="http://localhost:3000/info/account-activated" class="button__text">Visit our store</a>
+</td>
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+After:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```html
+<h1 class="shop-name__text">
+  <a href="https://www.my-app-domain.com/info/account-activated">{{ shop.name }}</a>
+</h1>
+```
 
-## Learn More
+```html
+<td class="button__cell">
+  <a href="https://www.my-app-domain.com/info/account-activated" class="button__text">Visit our store</a>
+</td>
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Save changes and return back to the **Notifications** block.
+5. In the **Customers notifications** section, click the **Customer account password reset** email template.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Pass the new URL instead of URL `http://localhost:3000` by replacing to your store domain in four places. For example:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Before:
 
-## Deploy on Vercel
+```html
+{% capture email_body %}Follow this link to reset your customer account password at
+<a href="http://localhost:3000/">{{shop.name}}</a>. If you didn't request a new password, you can safely delete this
+email.{% endcapture %}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```html
+<h1 class="shop-name__text">
+  <a href="http://localhost:3000/">{{ shop.name }}</a>
+</h1>
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```html
+<td class="button__cell">
+  <a href="http://localhost:3000/password-recovery?recoveryUrl={{ customer.reset_password_url }}" class="button__text"
+    >Reset your password</a
+  >
+</td>
+```
+
+```html
+<tr>
+  <td class="link__cell">or <a href="http://localhost:3000/">Visit our store</a></td>
+</tr>
+```
+
+After:
+
+```html
+{% capture email_body %}Follow this link to reset your customer account password at
+<a href="https://www.my-app-domain.com/">{{shop.name}}</a>. If you didn't request a new password, you can safely delete
+this email.{% endcapture %}
+```
+
+```html
+<h1 class="shop-name__text">
+  <a href="https://www.my-app-domain.com/">{{ shop.name }}</a>
+</h1>
+```
+
+```html
+<td class="button__cell">
+  <a
+    href="https://www.my-app-domain.com/password-recovery?recoveryUrl={{ customer.reset_password_url }}"
+    class="button__text"
+    >Reset your password</a
+  >
+</td>
+```
+
+```html
+<tr>
+  <td class="link__cell">or <a href="https://www.my-app-domain.com/">Visit our store</a></td>
+</tr>
+```

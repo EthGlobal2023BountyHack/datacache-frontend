@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'animations';
+
+@layer utilities {
+  .text-no-shadow {
+    text-shadow: none !important;
+  }
+}
+
+html,
+body {
+  min-height: 100vh;
+  min-width: 320px;
+  @apply bg-primary-dark;
+}
+
+html {
+  @apply antialiased;
+
+  body {
+    font-size: 1rem;
+
+    overflow-x: hidden;
+
+    &.menu-opened {
+      overflow: hidden !important;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: #aaa;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #aaa;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #797979;
+    border-radius: 20px;
+    border: 2px #797979;
+  }
+
+  input {
+    outline: none;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.text-fade {
+  animation: textFade 1s linear infinite;
+}

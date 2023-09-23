@@ -1,25 +1,78 @@
 {
-  "name": "nextjs",
-  "version": "0.1.0",
+  "name": "wen-swap",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint && prettier --check src",
+    "fix": "prettier --write ."
   },
   "dependencies": {
-    "@types/node": "20.6.3",
-    "@types/react": "18.2.22",
-    "@types/react-dom": "18.2.7",
-    "autoprefixer": "10.4.15",
-    "eslint": "8.49.0",
-    "eslint-config-next": "13.5.2",
-    "next": "13.5.2",
-    "postcss": "8.4.30",
+    "@headlessui/react": "^1.7.15",
+    "@metamask/eth-sig-util": "^5.0.2",
+    "@planetscale/database": "^1.7.0",
+    "@safe-global/safe-deployments": "^1.23.0",
+    "@vercel/analytics": "^0.1.10",
+    "bcrypt": "^5.1.0",
+    "classnames": "^2.3.1",
+    "connectkit": "^1.4.0",
+    "connectkit-next-siwe": "^0.2.0",
+    "cookie": "^0.5.0",
+    "date-fns": "^2.28.0",
+    "date-fns-tz": "^1.3.3",
+    "dotenv": "^16.1.4",
+    "ethers": "^5.5.4",
+    "formik": "^2.2.9",
+    "framer-motion": "^10.12.16",
+    "jsonwebtoken": "^8.5.1",
+    "keccak256": "^1.0.6",
+    "lodash": "^4.17.21",
+    "merkletreejs": "^0.2.27",
+    "next": "^13.4.10",
+    "next-seo": "^5.15.0",
+    "oauth": "^0.10.0",
+    "query-string": "^8.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tailwindcss": "3.3.3",
-    "typescript": "5.2.2"
+    "react-error-boundary": "^4.0.11",
+    "react-icons": "^4.11.0",
+    "react-toastify": "^8.2.0",
+    "sass": "^1.49.9",
+    "serialize-query-params": "^2.0.2",
+    "siwe": "^2.1.4",
+    "tiny-invariant": "^1.3.1",
+    "typescript": "^5.1.3",
+    "use-debounce": "^9.0.4",
+    "wagmi": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/react": "18.0.1",
+    "autoprefixer": "^10.4.13",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^13.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-tailwindcss": "^3.13.0",
+    "postcss": "^8.4.21",
+    "prettier": "^3.0.1",
+    "tailwind-scrollbar": "^2.0.1",
+    "tailwindcss": "^3.2.7"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "semi": true,
+    "printWidth": 120,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "jsxSingleQuote": false
+  },
+  "postcss": {
+    "plugins": {
+      "tailwindcss": {},
+      "autoprefixer": {}
+    }
   }
 }

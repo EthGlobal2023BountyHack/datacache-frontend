@@ -1,3 +1,19 @@
 {
-  "extends": "next/core-web-vitals"
+  "plugins": ["prettier"],
+  "extends": ["next/core-web-vitals", "plugin:tailwindcss/recommended", "plugin:prettier/recommended"],
+  "rules": {
+    "@next/next/no-img-element": 0,
+    "no-unused-vars": "warn",
+    "prettier/prettier": [
+      "error",
+      {
+        "tabWidth": 2,
+        "semi": true,
+        "printWidth": 120,
+        "singleQuote": true,
+        "trailingComma": "all",
+        "jsxSingleQuote": false
+      }
+    ]
+  }
 }
