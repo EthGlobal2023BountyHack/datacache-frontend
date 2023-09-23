@@ -9,6 +9,9 @@
     "lint": "next lint && prettier --check src",
     "fix": "prettier --write ."
   },
+  "browser": {
+    "child_process": false
+  },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
     "@metamask/eth-sig-util": "^5.0.2",
@@ -31,6 +34,7 @@
     "keccak256": "^1.0.6",
     "lodash": "^4.17.21",
     "merkletreejs": "^0.2.27",
+    "mongodb": "6.1",
     "next": "^13.4.10",
     "next-seo": "^5.15.0",
     "oauth": "^0.10.0",
