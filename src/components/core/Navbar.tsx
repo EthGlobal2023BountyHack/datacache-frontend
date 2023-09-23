@@ -63,8 +63,23 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
           <h1 className="uppercase text-lg font-black">DataCache</h1>
         </div>
         {/* Center Section */}
-        <div className="hidden lg:flex justify-center flex-grow w-1/2">
-          <Button onClick={() => { router.push('/') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
+        <div className="hidden lg:flex justify-center flex-grow w-1/2 gap-5">
+          <button
+            onClick={() => { router.push('/') }}
+          >
+            Home
+          </button>
+          <button
+            onClick={() => { router.push('/bounties') }}
+          >
+            Bounties
+          </button>
+          <button
+            onClick={() => { router.push('/dashboard') }}
+          >
+            Dashboard
+          </button>
+          {/* <Button onClick={() => { router.push('/') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
             Home
           </Button>
           <Button onClick={() => { router.push('/bounties') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
@@ -72,7 +87,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
           </Button>
           <Button onClick={() => { router.push('/dashboard') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
             Dashboard
-          </Button>
+          </Button> */}
         </div>
 
         {/* Right Section */}
