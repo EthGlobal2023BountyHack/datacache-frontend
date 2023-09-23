@@ -63,18 +63,27 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
           <h1 className="uppercase text-lg font-black">DataCache</h1>
         </div>
         {/* Center Section */}
-        <div className="hidden lg:flex justify-center flex-grow w-1/2 gap-5">
+        <div className="hidden lg:flex justify-center flex-grow w-1/2 gap-5 h-[100%]">
           <button
+            className={classnames(
+              { 'border-b-[1px]': router.pathname === '/' }
+            )}
             onClick={() => { router.push('/') }}
           >
             Home
           </button>
           <button
+            className={classnames(
+              { 'border-b-[1px]': router.pathname === '/bounties' }
+            )}
             onClick={() => { router.push('/bounties') }}
           >
             Bounties
           </button>
           <button
+            className={classnames(
+              { 'border-b-[1px]': router.pathname === '/dashboard' }
+            )}
             onClick={() => { router.push('/dashboard') }}
           >
             Dashboard

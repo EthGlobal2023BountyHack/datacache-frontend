@@ -8,7 +8,7 @@ import classnames from 'classnames';
 
 const Bounties = ({ user }) => {
   const [ensName, setEnsName] = useState(null);
-  const [query, setQuery] = useState(null)
+  const [query, setQuery] = useState("")
   const [filteredBounties, setFilteredBounties] = useState([])
   const [bounties, setBounties] = useState([
     {
@@ -126,6 +126,7 @@ const Bounties = ({ user }) => {
   }
 
   useEffect(() => {
+    console.log("here")
     setFilteredBounties(elligibleBounties(bounties))
   }, [])
 
