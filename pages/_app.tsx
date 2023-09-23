@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { WagmiConfig, createConfig } from 'wagmi';
+import { polygon } from 'wagmi/chains'
 import { ConnectKitProvider, SIWESession, getDefaultConfig } from 'connectkit';
 import { useRouter } from 'next/router';
 import { siweClient } from '@lib/siweClient';
@@ -197,6 +198,7 @@ const config = createConfig(
     alchemyId: process.env.NEXT_PUBLIC_ALCHEMY_KEY,
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
     appName: 'Datacache',
+    chains: [polygon]
   }),
 );
 

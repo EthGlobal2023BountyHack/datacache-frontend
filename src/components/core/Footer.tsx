@@ -2,7 +2,7 @@ import { FaDiscord as DiscordLogo, FaTwitter as TwitterLogo } from 'react-icons/
 import { Button } from '@components';
 
 const Footer: React.FC = () => (
-  <footer className="flex justify-between items-center h-[190px] border-t border-solid border-white/30 px-6 lg:px-10 transition-all duration-200 text-white">
+  <footer className="flex justify-between items-center h-[190px] border-t border-solid border-white/30 px-6 lg:px-10 transition-all duration-200 text-white mt-20">
     {/* Left Section */}
     <div className="flex shrink-0 w-1/2 lg:w-1/4">
       <div className="flex flex-col shrink-0 w-full">

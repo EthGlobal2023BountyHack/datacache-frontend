@@ -3,7 +3,7 @@ import { Layout } from '@/components';
 const Lander = ({ user }) => {
   return (
     <Layout isHeaderTransparent={true}>
-      Dashboard
+      <section className="px-20 grid grid-cols-12 gap-6">Dashboard</section>
     </Layout>
   );
 };

@@ -5,103 +5,36 @@ import { TfiSearch } from 'react-icons/tfi'
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
+import { useContractRead, useToken } from 'wagmi'
+import { marketplaceContract } from '@lib/constants';
 
 const Bounties = ({ user }) => {
   const [ensName, setEnsName] = useState(null);
   const [query, setQuery] = useState("")
   const [filteredBounties, setFilteredBounties] = useState([])
-  const [bounties, setBounties] = useState([
-    {
-      id: 1,
-      title: "Web3 Gaming Audience",
-      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
-      totalJoined: 8123,
-      payout: {
-        available: 100000,
-        type: "USDC"
-      },
-      neededParticipants: 10000,
-      from: "Microsoft",
-      logoUrl: "",
-      icon: FaMicrosoft,
-      hasJoined: true
-    },
-    {
-      id: 1,
-      title: "Kids & Parent in Web3",
-      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
-      totalJoined: 8123,
-      payout: {
-        available: 100000,
-        type: "USDC"
-      },
-      neededParticipants: 10000,
-      from: "Microsoft",
-      logoUrl: "",
-      icon: FaMicrosoft,
-      hasJoined: false
-    },
-    {
-      id: 1,
-      title: "What do you eat?",
-      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
-      totalJoined: 8123,
-      payout: {
-        available: 0,
-        type: "USDC"
-      },
-      neededParticipants: 10000,
-      from: "Microsoft",
-      logoUrl: "",
-      icon: FaMicrosoft,
-      hasJoined: false
-    },
-    {
-      id: 1,
-      title: "Are we all gonna make it?",
-      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
-      totalJoined: 8123,
-      payout: {
-        available: 100000,
-        type: "USDC"
-      },
-      neededParticipants: 10000,
-      from: "Microsoft",
-      logoUrl: "",
-      icon: FaMicrosoft,
-      hasJoined: true
-    },
-    {
-      id: 1,
-      title: "Man, thats my 6th rug this month :(",
-      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
-      totalJoined: 8123,
-      payout: {
-        available: 100000,
-        type: "USDC"
-      },
-      neededParticipants: 10000,
-      from: "Microsoft",
-      logoUrl: "",
-      icon: FaMicrosoft,
-      hasJoined: false
-    },
-    {
-      id: 1,
-      title: "Do Web3 people like cats?",
-      description: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available",
-      totalJoined: 8123,
-      payout: {
-        available: 100000,
-        type: "USDC"
-      },
-      neededParticipants: 10000,
-      from: "Microsoft",
-      logoUrl: "",
-      icon: FaMicrosoft,
-      hasJoined: true
-    },
-  ])
+  const { data: fetchedBounties, isError, isLoading: loadingBounties } = useContractRead({
+    address: marketplaceContract.address,
+    abi: marketplaceContract.abi,
+    functionName: 'getAllBounties',
+  })
+  const [bounties, setBounties] = useState(fetchedBounties?.reduce((acc, bytes) => {
+    try {
+      const [bountyId, name, description, reward, rewardType, rewardTotal, rewardAddress, payoutFrom] =
+          ethers.utils.defaultAbiCoder.decode(
+              ["uint256", "string", "string", "uint256", "bytes32", "uint256", "address", "address"],
+              bytes,
+              false
+          );
+      acc.push({
+        bountyId, name, description, reward, rewardType, rewardTotal, rewardAddress, payoutFrom
+      });
+
+      return acc;
+    } catch (e) {
+      console.log(e);
+      return acc;
+    }
+  }, []))
 
   const renderIcon = (icon) => {
     const Icon = icon
@@ -122,13 +55,14 @@ const Bounties = ({ user }) => {
   const tempTags = ["> 18", "opensea user", "hiker", "programer", "nft degen", "investor"]
 
   const elligibleBounties = (bounties) => {
-    return bounties.filter(({ payout }) => payout.available > 0)
+    return bounties.filter(({ rewardTotal }) => rewardTotal.toNumber() > 0)
   }
 
   useEffect(() => {
-    console.log("here")
+    if (loadingBounties) return
+
     setFilteredBounties(elligibleBounties(bounties))
-  }, [])
+  }, [loadingBounties])
 
   useEffect(() => {
     if (query === "") {
@@ -136,7 +70,7 @@ const Bounties = ({ user }) => {
       return
     }
 
-    const matchedBounties = bounties.filter(({ title, payout }) => title.toLowerCase().includes(query) && payout.available > 0)
+    const matchedBounties = bounties.filter(({ name, rewardTotal }) => name.toLowerCase().includes(query) && rewardTotal > 0)
     setFilteredBounties(elligibleBounties(matchedBounties))
   }, [query])
 
@@ -240,8 +174,8 @@ const Bounties = ({ user }) => {
           </div>
           <div className="flex gap-3 flex-wrap items-center justify-center">
             {filteredBounties.map(bounty => (
-              <div className='flex flex-col gap-4 w-3/12 bg-[#131313] p-6 flex-grow border-[1px] border-solid border-[#252525] min-h-[500px]'> 
-                <h2 className='font-bold text-2xl'>{ bounty.title }</h2>
+              <div className='flex flex-col gap-4 w-3/12 bg-[#131313] p-6 flex-grow border-[1px] border-solid border-[#252525]'> 
+                <h2 className='font-bold text-2xl'>{ bounty.name }</h2>
                 <p>{ bounty.description }</p>
                 <div className='flex justify-between items-center'>
                   <div>
@@ -284,18 +218,18 @@ const Bounties = ({ user }) => {
                 <div className='flex justify-between border-[1px] border-solid border-[#252525] p-3 '>
                   <div>
                     <p className='text-xxs'>Available payout</p>
-                    <p className='text-lg'>{kFormatter(bounty.payout.available)} {bounty.payout.type}</p>
+                    <p className='text-lg'>{kFormatter(bounty.rewardTotal.toNumber())} Matic</p>
                   </div>
                   <div>
                     <p className='text-xxs'>Participants needed</p>
-                    <p className='text-lg'>{dotFormatter(bounty.neededParticipants)}</p>
+                    <p className='text-lg'>{dotFormatter(bounty.rewardTotal.toNumber() / bounty.reward.toNumber())}</p>
                   </div>
                 </div>
                 <div className='flex justify-between items-center'>
-                  <p>From {bounty.from}</p>
-                  <div className='bg-yellow-500 p-2 rounded-sm'>
+                  <p>From {bounty.payoutFrom}</p>
+                  {/* <div className='bg-yellow-500 p-2 rounded-sm'>
                     {renderIcon(bounty.icon)}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))}
