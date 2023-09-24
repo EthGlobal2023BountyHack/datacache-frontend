@@ -29,7 +29,7 @@ const closing = {
   parenthesis: ')',
 };
 
-export function truncate(address: string, { nPrefix, nSuffix, separator } = {}) {
+function truncate(address: string, { nPrefix, nSuffix, separator } = {}) {
   if (!address) return;
   const match = address.match(/^(0x[a-zA-Z0-9])[a-zA-Z0-9]+([a-zA-Z0-9])$/);
   const nTotalIsLongerThanAddress = (nPrefix || 0) + (nSuffix || 0) > address.length;
@@ -114,6 +114,7 @@ const Home = ({ user }) => {
     address: marketplaceContract?.address,
     abi: marketplaceContract?.abi,
     functionName: 'getAllBounties',
+    chainId: currentChain?.id,
   });
 
   const bounties = useMemo(() => {
@@ -148,7 +149,7 @@ const Home = ({ user }) => {
   const { chain, chains } = useNetwork();
 
   const eligibleBounties = (bounties) => {
-    return bounties?.filter(({ rewardTotal }) => rewardTotal?.toNumber() > 0);
+    return bounties?.filter(({ rewardTotal }) => rewardTotal > 0n);
   };
 
   useEffect(() => {
