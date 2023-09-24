@@ -167,11 +167,6 @@ const WithUser = ({ Component, route, ...props }) => {
         signOutOnAccountChange={true} // defaults true
         signOutOnNetworkChange={true} // defaults true
         onSignIn={onWeb3SignIn}
-        onSignOut={() => {
-          if (user?.user?.issuer) {
-            router.push('/api/auth/logout');
-          }
-        }}
       >
         <ConnectKitProvider
           customTheme={ckCustomTheme}

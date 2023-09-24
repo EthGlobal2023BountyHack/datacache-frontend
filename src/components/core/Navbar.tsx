@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
   const handleLogOut = () => {
     disconnect();
     setUser({});
-    router.push('/api/auth/logout');
+    router.push('/api/auth/logout', undefined, { shallow: true });
   };
 
   const { chain: currentChain } = useNetwork();

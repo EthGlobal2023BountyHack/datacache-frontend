@@ -13,7 +13,10 @@ const Dashboard = ({ user }) => {
   const [showModal, setShowModal] = useState(false);
   const [isUsingNativeToken, setIsUsingNativeToken] = useState(true);
   const [tokenType, setTokenType] = useState('');
-  const [createBounty, setCreateBounty] = useState({ tokenAddress: '0x0000000000000000000000000000000000000000' });
+  const [createBounty, setCreateBounty] = useState({
+    tokenAddress: '0x0000000000000000000000000000000000000000',
+    rewardType: 'ERC20_REWARD',
+  });
   const [isFormComplete, setIsFormComplete] = useState(null);
 
   const { chain: currentChain } = useNetwork();
@@ -85,7 +88,7 @@ const Dashboard = ({ user }) => {
 
   return (
     <Layout isHeaderTransparent={true}>
-      <section className="px-20 flex gap-6 flex-col">
+      <section className="px-6 lg:px-10 flex gap-6 flex-col">
         <div className="border-[1px] border-solid border-[#252525] p-5 flex items-center gap-x-4 w-full">
           <TfiSearch color={'gray'} />
           <input
@@ -113,8 +116,13 @@ const Dashboard = ({ user }) => {
         </div>
       </section>
       {showModal && (
-        <div className="absolute h-full w-full bg-black opacity-90 flex items-center justify-center">
-          <div className="border-x-[1px] border-t-[1px] border-solid border-[#252525] w-1/4 pt-6 bg-dark">
+        <div
+          className="fixed h-full w-full bg-black bg-opacity-10 flex items-center justify-center z-[10000] top-0 left-0"
+          style={{
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div className="border-x-[1px] border-t-[1px] border-solid border-[#252525] w-1/3 pt-6 bg-black">
             <div className="flex items-center justify-between px-6 pb-6 bg-dark">
               <h1 className="text-xl">Create Bounty</h1>
               <button
@@ -127,7 +135,7 @@ const Dashboard = ({ user }) => {
             </div>
             <div className="border-y-[1px] border-solid border-[#252525] p-6 flex flex-col gap-3">
               <div className="bg-[#131313] p-2">
-                <p className="text-xs">Bounty Name</p>
+                <p className="text-xs">Name</p>
                 <input
                   onChange={({ target: { value } }) => {
                     setCreateBounty((prev) => {
@@ -136,6 +144,7 @@ const Dashboard = ({ user }) => {
                     setIsFormComplete(null);
                   }}
                   className="bg-[#131313] w-full flex-grow outline-none text-lg"
+                  value={createBounty?.name || ''}
                 />
               </div>
               <div className="bg-[#131313] p-2">
@@ -148,6 +157,20 @@ const Dashboard = ({ user }) => {
                     setIsFormComplete(null);
                   }}
                   className="bg-[#131313] w-full flex-grow outline-none text-lg"
+                  value={createBounty?.description || ''}
+                />
+              </div>
+              <div className="bg-[#131313] p-2">
+                <p className="text-xs">Image URL</p>
+                <input
+                  onChange={({ target: { value } }) => {
+                    setCreateBounty((prev) => {
+                      return { ...prev, imageUrl: value };
+                    });
+                    setIsFormComplete(null);
+                  }}
+                  className="bg-[#131313] w-full flex-grow outline-none text-lg"
+                  value={createBounty?.imageUrl || ''}
                 />
               </div>
               <div className="flex gap-3">
@@ -161,6 +184,7 @@ const Dashboard = ({ user }) => {
                       setIsFormComplete(null);
                     }}
                     className="bg-[#131313] w-full flex-grow outline-none text-lg"
+                    value={createBounty?.totalReward || ''}
                   />
                 </div>
                 <div className="bg-[#131313] p-2">
@@ -173,6 +197,7 @@ const Dashboard = ({ user }) => {
                       setIsFormComplete(null);
                     }}
                     className="bg-[#131313] w-full flex-grow outline-none text-lg"
+                    value={createBounty?.reward || ''}
                   />
                 </div>
               </div>
@@ -181,7 +206,6 @@ const Dashboard = ({ user }) => {
                 <div className="flex justify-between gap-2">
                   <button
                     onClick={() => {
-                      setTokenType('ERC-20');
                       setCreateBounty((prev) => {
                         return { ...prev, rewardType: 'ERC20_REWARD' };
                       });
@@ -189,7 +213,7 @@ const Dashboard = ({ user }) => {
                     }}
                     className={classnames(
                       'border-[1px] border-solid border-[#252525] w-full hover:bg-white hover:text-black',
-                      { 'bg-white text-black': tokenType === 'ERC-20' },
+                      { 'bg-white text-black': createBounty.rewardType === 'ERC20_REWARD' },
                     )}
                   >
                     ERC-20
@@ -203,9 +227,10 @@ const Dashboard = ({ user }) => {
                       setIsFormComplete(null);
                     }}
                     className={classnames(
-                      'border-[1px] border-solid border-[#252525] w-full hover:bg-white hover:text-black',
+                      'border-[1px] border-solid border-[#252525] w-full opacity-50 cursor-not-allowed',
                       { 'bg-white text-black': tokenType === 'ERC-721' },
                     )}
+                    disabled
                   >
                     ERC-721
                   </button>
@@ -218,9 +243,10 @@ const Dashboard = ({ user }) => {
                       setIsFormComplete(null);
                     }}
                     className={classnames(
-                      'border-[1px] border-solid border-[#252525] w-full hover:bg-white hover:text-black',
+                      'border-[1px] border-solid border-[#252525] w-full opacity-50 cursor-not-allowed',
                       { 'bg-white text-black': tokenType === 'ERC-1155' },
                     )}
+                    disabled
                   >
                     ERC-1155
                   </button>
@@ -238,7 +264,7 @@ const Dashboard = ({ user }) => {
                       });
                       setIsFormComplete(null);
                     }}
-                    value={createBounty.tokenAddress}
+                    value={createBounty?.tokenAddress}
                   />
                 </div>
                 <button
@@ -260,12 +286,12 @@ const Dashboard = ({ user }) => {
                     setIsUsingNativeToken((prev) => !prev);
                     setIsFormComplete(null);
                   }}
-                  className={classnames(
-                    'border-[1px] border-solid border-[#252525] py-1 px-3 mt-2 hover:bg-white hover:text-black',
-                    { 'bg-white text-black': isUsingNativeToken },
-                  )}
+                  className={classnames('border-[1px] border-solid border-[#252525] py-1 px-3 mt-2 bg-primary', {
+                    'bg-primary text-white': isUsingNativeToken,
+                    'bg-white text-black': !isUsingNativeToken,
+                  })}
                 >
-                  Use Native Gas Token
+                  {isUsingNativeToken ? 'Use another ERC20' : 'Use native token'}
                 </button>
               </div>
             </div>

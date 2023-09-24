@@ -42,7 +42,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ setIsLoginModalOpen }) => {
   const [, , , onWeb2SignIn] = useContext(UserContext);
   return (
     <Modal onClose={() => setIsLoginModalOpen((isOpen) => !isOpen)}>
-      <div className="relative left-1/2 top-[122px] mb-[182px] max-w-[400px] -translate-x-1/2 rounded-[28px] bg-primary-dark p-[24px] lg:top-1/2  lg:-translate-y-1/2">
+      <div className="relative left-1/2 top-[122px] mb-[182px] max-w-[400px] -translate-x-1/2  bg-primary-dark p-[24px] lg:top-1/2  lg:-translate-y-1/2">
         <h1 className="font-header text-[32px] leading-[32px]">Join & Login</h1>
         <LoginForm
           onWeb2SignIn={onWeb2SignIn}

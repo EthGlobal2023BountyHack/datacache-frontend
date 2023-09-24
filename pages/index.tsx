@@ -1,9 +1,9 @@
 import { Button, Image, Layout } from '@/components';
 import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa';
 import { HiEllipsisVertical } from 'react-icons/hi2';
-import { TfiClose, TfiSearch, TfiArrowCircleDown } from 'react-icons/tfi';
+import { TfiClose, TfiSearch, TfiArrowCircleUp } from 'react-icons/tfi';
 import { ethers } from 'ethers';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import classnames from 'classnames';
 import { chainIdToContractMapping } from '@lib/constants';
 import { MetaMaskAvatar } from 'react-metamask-avatar';
@@ -105,6 +105,7 @@ const Home = ({ user }) => {
   const [tags, setTags] = useState([]);
   const [query, setQuery] = useState('');
   const [filteredBounties, setFilteredBounties] = useState([]);
+
   const {
     data: fetchedBounties,
     isError,
@@ -114,12 +115,13 @@ const Home = ({ user }) => {
     abi: marketplaceContract?.abi,
     functionName: 'getAllBounties',
   });
-  const [bounties, setBounties] = useState(
-    fetchedBounties?.reduce((acc, bytes) => {
+
+  const bounties = useMemo(() => {
+    return fetchedBounties?.reduce((acc, bytes) => {
       try {
-        const [bountyId, name, description, reward, rewardType, rewardTotal, rewardAddress, payoutFrom] =
+        const [bountyId, name, description, imageUrl, reward, rewardType, rewardTotal, rewardAddress, payoutFrom] =
           ethers.utils.defaultAbiCoder.decode(
-            ['uint256', 'string', 'string', 'uint256', 'bytes32', 'uint256', 'address', 'address'],
+            ['uint256', 'string', 'string', 'string', 'uint256', 'bytes32', 'uint256', 'address', 'address'],
             bytes,
             false,
           );
@@ -127,20 +129,22 @@ const Home = ({ user }) => {
           bountyId,
           name,
           description,
+          imageUrl,
           reward,
           rewardType,
           rewardTotal,
           rewardAddress,
           payoutFrom,
         });
-        console.log(acc);
+
         return acc;
       } catch (e) {
         console.log(e);
         return acc;
       }
-    }, []),
-  );
+    }, []);
+  }, [fetchedBounties]);
+
   const { chain, chains } = useNetwork();
 
   const eligibleBounties = (bounties) => {
@@ -271,49 +275,57 @@ const Home = ({ user }) => {
           </div>
         </div>
       </section>
-      <div className="absolute flex bottom-0 right-0 hover:cursor-pointer w-[500px] flex flex-col bg-black">
-        <button
-          onClick={() => {
-            setIsMessageOpen((prev) => !prev);
-          }}
-        >
-          <div
-            className={classnames(
-              'border-l-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
-              { 'border-b-[1px]': isMessageOpen },
-            )}
+      {user && (
+        <div className="absolute flex bottom-0 right-0 hover:cursor-pointer w-[500px] flex flex-col bg-black">
+          <button
+            onClick={() => {
+              setIsMessageOpen((prev) => !prev);
+            }}
           >
-            <div className="flex flex-row items-center justify-between gap-x-3 w-full pr-6">
-              <p>Messages</p>
-              <button className="bg-primary text-white px-4 py-1" onClick={subscribe}>
-                Subscribe
-              </button>
+            <div
+              className={classnames(
+                'border-l-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
+                { 'border-b-[1px]': isMessageOpen },
+              )}
+            >
+              <div className="flex flex-row items-center space-x-1 w-full pr-6">
+                <p>Inbox</p>
+                <span
+                  className="flex items-center flex-row text-white/60 py-1 pl-1 text-sm space-x-2"
+                  onClick={subscribe}
+                >
+                  <span>by</span>
+                  <Image className="rounded-full overflow-hidden" src="/wc.png" height={20} width={20} alt="wc logo" />
+                </span>
+              </div>
+              {isMessageOpen ? <TfiClose /> : <TfiArrowCircleUp />}
             </div>
-            {isMessageOpen ? <TfiClose /> : <TfiArrowCircleDown />}
-          </div>
-        </button>
-        {isMessageOpen && (
-          <div className="border-x-[1px] border-solid border-[#252525] h-[400px] p-6 overflow-auto bg-[#131313] gap-3">
-            {messages?.map(({ message: { body } }) => {
-              if (body[0] !== '{') return;
+          </button>
+          {isMessageOpen && (
+            <div className="border-x-[1px] border-solid border-[#252525] h-[400px] p-3 overflow-auto bg-[#131313] gap-3">
+              {messages?.map(({ message: { body } }) => {
+                if (body[0] !== '{') return;
 
-              const parsedMessage = JSON.parse(body);
+                const parsedMessage = JSON.parse(body);
 
-              if (!Object.keys(parsedMessage).includes('bountyId')) return;
+                if (!Object.keys(parsedMessage).includes('bountyId')) return;
 
-              const time = new Date(parsedMessage.timestamp * 1000);
+                const time = new Date(parsedMessage.timestamp * 1000);
 
-              return (
-                <div className="border-[1px] border-solid border-[#252525] py-2 px-4 bg-black">
-                  <p className="font-bold">{bounties?.filter(({ bountyId }) => bountyId === body.bountyId)[0]?.name}</p>
-                  <p className="">Based on your verified traits, you are eligible to join this bounty!</p>
-                  <p className="text-xs pt-3 text-white/60">{time.toLocaleString()}</p>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                return (
+                  <div className="border-[1px] border-solid border-[#252525] py-2 px-4 bg-black">
+                    <p className="font-bold">
+                      {bounties?.filter(({ bountyId }) => bountyId === body?.bountyId)[0]?.name}
+                    </p>
+                    <p className="">Based on your verified traits, you are eligible to join this bounty!</p>
+                    <p className="text-xs pt-3 text-white/60">{time.toLocaleString()}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </Layout>
   );
 };
