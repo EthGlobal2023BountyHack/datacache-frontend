@@ -5664,6 +5664,11 @@ react-is@^16.13.1, react-is@^16.7.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-metamask-avatar@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-metamask-avatar/-/react-metamask-avatar-1.2.1.tgz#f0623e00ebc90ec24b8ac91cad3a25f653e7bc25"
+  integrity sha512-EQhaW27PdqGKLxCnDgpCTWnEs1bjba+l5b/ZQc1V/GSWrCznAcrQ2HrcjSPgmuud2rvDChYyrzgRB5sBU33gSw==
+
 react-remove-scroll-bar@^2.3.3:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/react-remove-scroll-bar/-/react-remove-scroll-bar-2.3.4.tgz#53e272d7a5cb8242990c7f144c44d8bd8ab5afd9"

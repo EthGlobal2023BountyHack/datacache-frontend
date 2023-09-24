@@ -5,8 +5,9 @@ import { TfiSearch } from 'react-icons/tfi'
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import { useContractRead, useToken } from 'wagmi'
+import { useContractRead, useNetwork } from 'wagmi'
 import { marketplaceContract } from '@lib/constants';
+import { MetaMaskAvatar } from 'react-metamask-avatar';
 import BountyCard from '@/components/layouts/BountyCard';
 
 const Home = ({ user }) => {
@@ -37,8 +38,7 @@ const Home = ({ user }) => {
       return acc;
     }
   }, []))
-
-  const tempTags = ["> 18", "opensea user", "hiker", "programer", "nft degen", "investor"]
+  const { chain, chains } = useNetwork()
 
   const elligibleBounties = (bounties) => {
     return bounties.filter(({ rewardTotal }) => rewardTotal.toNumber() > 0)
@@ -78,7 +78,18 @@ const Home = ({ user }) => {
   return (
     <Layout isHeaderTransparent={true}>
       <section className="px-20 grid grid-cols-12 gap-6">
-        <div className="flex border-[1px] border-solid border-[#252525] flex-col py-10 text-zinc-500 items-center col-span-3 h-fit">
+        <div className={classnames(
+          "flex border-[1px] border-solid border-[#252525] flex-col text-white col-span-3 h-fit",
+          { 'py-10 items-center': user },
+          { 'p-10': !user }
+        )}>
+          {!user && (
+            <div>
+              <p className='text-xs'>About</p>
+              <h1 className='uppercase text-3xl'>DataCache</h1>
+              <p className='pt-5'>Control your data destiny with us! Upload your data securely, and our accredited issuers verify its accuracy. Advertisers can set 'bounties' for specific data they need, and when you match their criteria, you get paid. It's your data, your trust, and your reward, all in one app.</p>
+            </div>
+          )} 
           <div className={classnames(
             'flex flex-col items-center',
             { 'pb-4': user }
@@ -86,7 +97,7 @@ const Home = ({ user }) => {
             <div className={classnames(
               { 'pb-3': user }
             )}>
-              <FaUserCircle size={150} color='white'/>
+              <MetaMaskAvatar address={user?.ethAddress} size={150} />
             </div>
             {user && (
               <>
