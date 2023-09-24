@@ -86,7 +86,7 @@ const NameDisplay = ({ address, className }) => {
 const ConnectWallet = ({
   buttonClassName = null,
   className = null,
-  siteName = 'datacache.xyz',
+  siteName = 'datacache.app',
   displayAddress = false,
   connectText = 'Connect Wallet',
   onClick,

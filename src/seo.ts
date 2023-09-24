@@ -1,5 +1,5 @@
 export default {
-  baseURL: 'https://www.datacache.io/',
+  baseURL: 'https://www.datacache.app/',
   defaultTitle: 'Datacache',
   description: '',
 };

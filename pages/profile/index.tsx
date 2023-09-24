@@ -169,7 +169,7 @@ export default function Profile() {
             </div>
             <div className="border-t-[1px] border-white/30 py-6 space-y-2">
               <h2 className="text-xl underline">Verified Credential Claims</h2>
-              <p>datacache.xyz is a credential issuer for wallet insights.</p>
+              <p>datacache.app is a credential issuer for wallet insights.</p>
               <button onClick={handleCreateCredentialRequest} className="border p-3 my-3">
                 Claim Now
               </button>
