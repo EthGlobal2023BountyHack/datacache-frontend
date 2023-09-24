@@ -19,8 +19,11 @@ const Home = ({ user }) => {
 
  const isReady = useInitWeb3InboxClient({projectId: "418e276fdef7a308d3399d8598b7e135", domain: "datacache.ecalculator.pro" })
   
- const { account } = useAccount();
- 
+ const { address } = useAccount({
+  onDisconnect: () => {
+    setAccount("");
+  },
+}); 
  // Getting the account -- Use register before attempting to subscribe
  const { setAccount, register: registerIdentity, identityKey } = useW3iAccount()
  
@@ -35,18 +38,18 @@ const Home = ({ user }) => {
  const { messages } = useMessages()
  
   useEffect(() => {
-    if (!user) return
-    setAccount(`eip155:1:${user.ethAddress}`);
- }, [user, setAccount]);
+    if (!address) return
+    setAccount(`eip155:1:${address}`);
+ }, [address, setAccount,]);
 
  const handleRegistration = useCallback(async () => {
-   if (!account) return;
+   if (!address) return;
    try {
      await registerIdentity(signMessageAsync);
    } catch (registerIdentityError) {
      console.error({ registerIdentityError });
    }
- }, [signMessageAsync, registerIdentity, account]);
+ }, [signMessageAsync, registerIdentity, address]);
 
  useEffect(() => {
    if (!identityKey) {
@@ -110,6 +113,8 @@ const Home = ({ user }) => {
 
     if (!isReady) return
     console.log("isReady", isReady)
+    if (!Boolean(address)) return;
+    // setAccount(`eip155:1:${address}`);
     subscribe()
   }, [isReady])
 
