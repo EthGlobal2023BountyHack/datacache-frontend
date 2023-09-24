@@ -155,7 +155,7 @@ const Home = ({ user }) => {
 
   return (
     <Layout isHeaderTransparent={true}>
-      <section className="px-20 grid grid-cols-12 gap-6">
+      <section className="px-6 lg:px-10 grid grid-cols-12 gap-6">
         <div
           className={classnames(
             'flex border-[1px] border-solid border-[#252525] flex-col text-white col-span-3 h-fit',

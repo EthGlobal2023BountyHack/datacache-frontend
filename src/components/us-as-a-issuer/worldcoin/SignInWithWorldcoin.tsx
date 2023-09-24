@@ -4,6 +4,7 @@ import type { VerifyReply } from '../../../../pages/api/worldcoin/verify';
 import { toast } from 'react-toastify';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { UserContext } from '@/context/UserContext';
+import { useAccount } from 'wagmi';
 
 type SignInWithWorldcoinProps = {
   worldcoinVerified: boolean;
@@ -11,13 +12,13 @@ type SignInWithWorldcoinProps = {
 };
 export default function SignInWithWorldcoin(SignInWithWorldcoinProps) {
   const { worldcoinVerified, setWorldcoinVerified } = SignInWithWorldcoinProps;
-
+  const { address } = useAccount();
   /*
   const [{ user }, setUser] = useContext(UserContext);
   */
 
   const user = {
-    ethAddress: '0x1234567890123456789012345678901234567890',
+    ethAddress: address,
   };
 
   const onSuccess = (result: ISuccessResult) => {
@@ -56,7 +57,7 @@ export default function SignInWithWorldcoin(SignInWithWorldcoinProps) {
   return (
     user &&
     (worldcoinVerified ? (
-      <p className="text-green-500">Verified</p>
+      <p className="text-green-500 font-black">Verified</p>
     ) : (
       <IDKitWidget
         action={process.env.NEXT_PUBLIC_WLD_ACTION_NAME!}
@@ -67,7 +68,7 @@ export default function SignInWithWorldcoin(SignInWithWorldcoinProps) {
         autoClose
       >
         {({ open }) => (
-          <button className="border my-1 rounded-md" onClick={open}>
+          <button className="bg-primary text-white px-2 py-2" onClick={open}>
             <div className="mx-3 my-1">Verify with World ID</div>
           </button>
         )}

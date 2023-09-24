@@ -27,7 +27,7 @@ const sampleSchema = {
 
 export default function Profile() {
   const [{ user }, setUser] = useContext(UserContext);
-  let [isOpen, setIsOpen] = useState(true);
+  let [isOpen, setIsOpen] = useState(false);
 
   const [worldcoinVerified, setWorldcoinVerified] = useState<boolean>(false);
   const [claimQR, setClaimQR] = useState<string>('');
@@ -56,7 +56,7 @@ export default function Profile() {
     if (allTags) return;
 
     //fetch the eligible tags
-    getEligibletagsForUser('0x75e89d5979e4f6fba9f97c104c2f0afb3f1dcb88');
+    getEligibletagsForUser(user.ethAddress);
     getAllTags();
   });
 
@@ -137,18 +137,19 @@ export default function Profile() {
         </Dialog>
 
         {user ? (
-          <div className="w-4/5 m-auto">
-            <h1 className="text-lg">Get verified by us for greater eligibility</h1>
-            <div className="ml-5">
+          <div className="flex w-full h-full flex-col p-10 space-y-4">
+            <h1 className="text-3xl font-bold">Profile</h1>
+            <h2 className="text-xl underline">Wallet Insights</h2>
+            <div className="flex flex-col space-y-2">
               {allTags &&
                 allTags.map((tag) => {
                   return (
                     <div key={tag as any}>
                       <h2>{tag}</h2>
                       {eligibleTags?.includes(tag) ? (
-                        <p className="text-green-500">Eligible based on chain analysis</p>
+                        <p className="text-green-500">Eligible</p>
                       ) : (
-                        <p className="text-red-700">Not eligible based on chain analysis</p>
+                        <p className="text-red-700">Not eligible</p>
                       )}
                       {/*eligibleTags && eligibleTags.filter((e) => e.name == tag.name) ? (
                     <p className="text-green-500">Eligible based on chain analysis</p>
@@ -159,23 +160,23 @@ export default function Profile() {
                   );
                 })}
               <h2>Worldcoin</h2>
-              <p>
+              <div>
                 <SignInWithWorldcoin
                   worldcoinVerified={worldcoinVerified}
                   setWorldcoinVerified={setWorldcoinVerified}
                 />
-              </p>
+              </div>
             </div>
-            <div>
+            <div className="border-t-[1px] border-white/30 py-6 space-y-2">
+              <h2 className="text-xl underline">Verified Credential Claims</h2>
+              <p>datacache.xyz is a credential issuer for wallet insights.</p>
               <button onClick={handleCreateCredentialRequest} className="border p-3 my-3">
-                Generate Proof
+                Claim Now
               </button>
               <div>{loading && <p>Loading...</p>}</div>
             </div>
           </div>
-        ) : (
-          <p>Connect your wallet</p>
-        )}
+        ) : null}
       </Layout>
     </>
   );
