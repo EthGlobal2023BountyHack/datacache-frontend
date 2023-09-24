@@ -1,7 +1,7 @@
 import { Button, Layout } from '@/components';
 import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa'
 import { HiEllipsisVertical } from 'react-icons/hi2'
-import { TfiSearch } from 'react-icons/tfi'
+import { TfiClose, TfiSearch } from 'react-icons/tfi'
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import classnames from 'classnames';
@@ -70,6 +70,7 @@ const Home = ({ user }) => {
 
  // -----
 
+  const [isMessageOpen, setIsMessageOpen] = useState(false)
   const [ensName, setEnsName] = useState(null);
   const [tags, setTags] = useState([])
   const [query, setQuery] = useState("")
@@ -100,7 +101,7 @@ const Home = ({ user }) => {
   const { chain, chains } = useNetwork()
 
   const elligibleBounties = (bounties) => {
-    return bounties.filter(({ rewardTotal }) => rewardTotal.toNumber() > 0)
+    return bounties?.filter(({ rewardTotal }) => rewardTotal.toNumber() > 0)
   }
 
   useEffect(() => {
@@ -115,7 +116,7 @@ const Home = ({ user }) => {
       return
     }
 
-    const matchedBounties = bounties.filter(({ name, rewardTotal }) => name.toLowerCase().includes(query) && rewardTotal > 0)
+    const matchedBounties = bounties?.filter(({ name, rewardTotal }) => name.toLowerCase().includes(query) && rewardTotal > 0)
     setFilteredBounties(elligibleBounties(matchedBounties))
   }, [query])
 
@@ -265,8 +266,41 @@ const Home = ({ user }) => {
         </div>
        
       </section>
-      <div className='absolute bg-blue-500 flex bottom-0 mb-[190px] right-0'>
-        <p>asjkdhasdasdasd</p>
+      <div className='absolute flex bottom-0 mb-[100px] right-10 hover:cursor-pointer w-[500px] flex flex-col bg-black'>
+        <button
+          onClick={() => { setIsMessageOpen(prev => !prev) }}
+          >
+          <div className={classnames(
+            'border-x-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
+            { 'border-b-[1px]': isMessageOpen }
+          )}>
+            <p>Messages</p>
+            <TfiClose />
+          </div>
+        </button>
+        {isMessageOpen && (
+          <div className='border-x-[1px] border-solid border-[#252525] h-[400px] px-5 py-3 overflow-auto'>
+            {messages.map(({ message: { body } }) => {
+              if (body[0] !== "{") return
+
+              const parsedMessage = JSON.parse(body)
+
+              if (Object.keys(parsedMessage).length !== 2) return
+              if (Object.keys(parsedMessage).includes('bountyId')) return
+
+              const time = new Date(parsedMessage.timestamp * 1000)
+
+              return (
+                <div className='border-[1px] border-solid border-[#252525] max-w-[400px] p-2 mb-3'>
+                  <p className='font-bold'>{ bounties.filter(({ bountyId }) => bountyId === body.bountyId)[0]?.name }</p>
+                  <p className=''>Based on your verified traits, you are elligible to join this bounty!</p>
+                  <p className='text-xs pt-3'>{ time.toLocaleString() }</p>
+                  <p>{body}</p>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
     </Layout>
   )
