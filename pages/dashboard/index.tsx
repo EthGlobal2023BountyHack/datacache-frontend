@@ -91,8 +91,8 @@ const Dashboard = ({ user }) => {
           {filteredBounties.map(bounty => (
             <BountyCard bounty={bounty} />
           ))}
-          {bounties.length === 0 && (
-            <div className=''>No bounties have been created yet!</div>
+          {filteredBounties.length === 0 && query === "" && (
+            <div className=''>You have no bounties yet</div>
           )}
         </div>
       </section>

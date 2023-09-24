@@ -168,9 +168,9 @@ const Home = ({ user }) => {
             {filteredBounties.map(bounty => (
               <BountyCard bounty={bounty} />
             ))}
-            {/* {bounties.length === 0 && (
+            {filteredBounties.length === 0 && query === "" && (
               <p>No bounties have been created yet!</p>
-            )} */}
+            )}
           </div>
         </div>
       </section>
