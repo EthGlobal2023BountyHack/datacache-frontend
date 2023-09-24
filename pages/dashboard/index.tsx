@@ -149,6 +149,14 @@ const useBounty = ({ onSuccess }) => {
     actions: {
       onCreateBounty: async (values) => {
         try {
+          const validatorByChain = {
+            [polygon.id]: '0xEC1f49f41A0313c5437Ee399fa44dAFFe56E7eE0',
+            [polygonZkEvm.id]: '0xC3DCf42828ACE92ceA54B79dBA0Abd3b8bE4ff2d',
+            [mantle.id]: '0xC3DCf42828ACE92ceA54B79dBA0Abd3b8bE4ff2d',
+            [base.id]: '0xE5179B37De3010506fCb94549e304306D3A4B335',
+            [scrollSepolia.id]: '0xC3DCf42828ACE92ceA54B79dBA0Abd3b8bE4ff2d',
+          };
+
           if (false) {
             const smartAccount = await biconomyAccount?.init();
             await checkSmartWalletAssociation({ smartAccount });
@@ -187,9 +195,9 @@ const useBounty = ({ onSuccess }) => {
                 'ERC20_REWARD',
                 parseEther(String(values.reward)),
                 parseEther(String(values.totalReward)),
-                '0x0000000000000000000000000000000000000000',
+                values.tokenAddress,
                 // MTP validator
-                createRequest('0xEC1f49f41A0313c5437Ee399fa44dAFFe56E7eE0'),
+                createRequest(validatorByChain[chain?.id]),
               ],
             });
 
@@ -221,20 +229,12 @@ const useBounty = ({ onSuccess }) => {
 
             console.log(values);
 
-            const validatorByChain = {
-              [polygon.id]: '0xEC1f49f41A0313c5437Ee399fa44dAFFe56E7eE0',
-              [polygonZkEvm.id]: '0xC3DCf42828ACE92ceA54B79dBA0Abd3b8bE4ff2d',
-              [mantle.id]: '0xC3DCf42828ACE92ceA54B79dBA0Abd3b8bE4ff2d',
-              [base.id]: '0xE5179B37De3010506fCb94549e304306D3A4B335',
-              [scrollSepolia.id]: '0xC3DCf42828ACE92ceA54B79dBA0Abd3b8bE4ff2d',
-            };
-
             const createArgs = [
               [values.name, values.description, values.imageUrl],
               'ERC20_REWARD',
               parseEther(String(values.reward)),
               parseEther(String(values.totalReward)),
-              '0x0000000000000000000000000000000000000000',
+              values.tokenAddress,
               // MTP validator
               createRequest(validatorByChain[chain?.id]),
             ];
