@@ -1,7 +1,7 @@
 import { Button, Layout } from '@/components';
-import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa'
-import { HiEllipsisVertical } from 'react-icons/hi2'
-import { TfiClose, TfiSearch } from 'react-icons/tfi'
+import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa';
+import { HiEllipsisVertical } from 'react-icons/hi2';
+import { TfiClose, TfiSearch } from 'react-icons/tfi';
 import { ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import classnames from 'classnames';
@@ -13,90 +13,70 @@ import {
   useManageSubscription,
   useW3iAccount,
   useMessages,
-  useSubscription
-} from "@web3inbox/widget-react";
-import { useAccount, useContractRead, useSignMessage, useNetwork } from "wagmi";
+  useSubscription,
+} from '@web3inbox/widget-react';
+import { useAccount, useContractRead, useSignMessage, useNetwork } from 'wagmi';
 
 const Home = ({ user }) => {
-  // -----
-
   const isReady = useInitWeb3InboxClient({
     projectId: '418e276fdef7a308d3399d8598b7e135',
     domain: 'datacache.ecalculator.pro',
   });
 
-//   const { account } = useAccount();
   const { chain: currentChain } = useNetwork();
 
   const marketplaceContract = chainIdToContractMapping[currentChain?.id];
 
-//   // Getting the account -- Use register before attempting to subscribe
-//   const { setAccount, register: registerIdentity, identityKey } = useW3iAccount();
+  const { address } = useAccount({
+    onDisconnect: () => {
+      setAccount('');
+    },
+  });
+  // Getting the account -- Use register before attempting to subscribe
+  const { account, setAccount, register: registerIdentity, identityKey } = useW3iAccount();
+  const { signMessageAsync } = useSignMessage();
 
-//   const { signMessageAsync } = useSignMessage();
+  // Checking if subscribed
+  const { subscribe, isSubscribed } = useManageSubscription(account);
 
-//   // Checking if subscribed
-//   const { subscribe, isSubscribed } = useManageSubscription(user?.ethAddress);
+  // Get the subscription
+  const { subscription } = useSubscription();
 
-//   // Get the subscription
-//   const { subscription } = useSubscription();
+  const { messages } = useMessages();
 
-//   const { messages } = useMessages();
+  const signMessage = useCallback(
+    async (message: string) => {
+      const res = await signMessageAsync({
+        message,
+      });
 
-//  const isReady = useInitWeb3InboxClient({projectId: "418e276fdef7a308d3399d8598b7e135", domain: "datacache.ecalculator.pro" })
-  
- const { address } = useAccount({
-  onDisconnect: () => {
-    setAccount("");
-  },
-}); 
- // Getting the account -- Use register before attempting to subscribe
- const { account, setAccount, register: registerIdentity, identityKey } = useW3iAccount()
- const { signMessageAsync } = useSignMessage();
- 
- // Checking if subscribed
- const { subscribe, isSubscribed } = useManageSubscription(account)
- 
- // Get the subscription
- const { subscription } = useSubscription()
- 
- const { messages } = useMessages()
- 
- const signMessage = useCallback(
-  async (message: string) => {
-    const res = await signMessageAsync({
-      message,
-    });
-
-    return res as string;
-  },
-  [signMessageAsync]
-);
+      return res as string;
+    },
+    [signMessageAsync],
+  );
 
   useEffect(() => {
-    if (!address) return
+    if (!address) return;
     setAccount(`eip155:1:${address}`);
- }, [signMessage, address, setAccount,]);
+  }, [signMessage, address, setAccount]);
 
- const handleRegistration = useCallback(async () => {
-  if (!account) return;
-  console.log("handleRegistration")
-  try {
-    await registerIdentity(signMessage);
-  } catch (registerIdentityError) {
-    console.error({ registerIdentityError });
-  }
-}, [signMessage, registerIdentity, account]);
+  const handleRegistration = useCallback(async () => {
+    if (!account) return;
+    console.log('handleRegistration');
+    try {
+      await registerIdentity(signMessage);
+    } catch (registerIdentityError) {
+      console.error({ registerIdentityError });
+    }
+  }, [signMessage, registerIdentity, account]);
 
- useEffect(() => {
-  if (!identityKey) {
-    handleRegistration();
-  }
-}, [handleRegistration, identityKey]);
+  useEffect(() => {
+    if (!identityKey) {
+      handleRegistration();
+    }
+  }, [handleRegistration, identityKey]);
 
-  // -----
-
-  const [isMessageOpen, setIsMessageOpen] = useState(false)
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [ensName, setEnsName] = useState(null);
   const [tags, setTags] = useState([]);
   const [query, setQuery] = useState('');
@@ -258,46 +238,46 @@ const Home = ({ user }) => {
             )}
           </div>
         </div>
-       
       </section>
-      <div className='absolute flex bottom-0 mb-[120px] right-10 hover:cursor-pointer w-[500px] flex flex-col bg-black'>
+      <div className="absolute flex bottom-0 mb-[120px] right-10 hover:cursor-pointer w-[500px] flex flex-col bg-black">
         <button
-          onClick={() => { setIsMessageOpen(prev => !prev) }}
+          onClick={() => {
+            setIsMessageOpen((prev) => !prev);
+          }}
+        >
+          <div
+            className={classnames(
+              'border-x-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
+              { 'border-b-[1px]': isMessageOpen },
+            )}
           >
-          <div className={classnames(
-            'border-x-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
-            { 'border-b-[1px]': isMessageOpen }
-          )}>
-            <div className='flex items-center gap-x-3'>
+            <div className="flex items-center gap-x-3">
               <p>Messages</p>
-              <button
-                className='border-[1px] border-solid border-[#252525] px-4 py-1'
-                onClick={subscribe}
-              >
-                Subscribe  
+              <button className="border-[1px] border-solid border-[#252525] px-4 py-1" onClick={subscribe}>
+                Subscribe
               </button>
             </div>
             <TfiClose />
           </div>
         </button>
         {isMessageOpen && (
-          <div className='border-x-[1px] border-solid border-[#252525] h-[400px] px-5 py-3 overflow-auto'>
+          <div className="border-x-[1px] border-solid border-[#252525] h-[400px] px-5 py-3 overflow-auto">
             {messages.map(({ message: { body } }) => {
-              if (body[0] !== "{") return
+              if (body[0] !== '{') return;
 
-              const parsedMessage = JSON.parse(body)
+              const parsedMessage = JSON.parse(body);
 
-              if (!Object.keys(parsedMessage).includes('bountyId')) return
+              if (!Object.keys(parsedMessage).includes('bountyId')) return;
 
-              const time = new Date(parsedMessage.timestamp * 1000)
+              const time = new Date(parsedMessage.timestamp * 1000);
 
               return (
-                <div className='border-[1px] border-solid border-[#252525] max-w-[400px] p-2 mb-3'>
-                  <p className='font-bold'>{ bounties?.filter(({ bountyId }) => bountyId === body.bountyId)[0]?.name }</p>
-                  <p className=''>Based on your verified traits, you are elligible to join this bounty!</p>
-                  <p className='text-xs pt-3'>{ time.toLocaleString() }</p>
+                <div className="border-[1px] border-solid border-[#252525] max-w-[400px] p-2 mb-3">
+                  <p className="font-bold">{bounties?.filter(({ bountyId }) => bountyId === body.bountyId)[0]?.name}</p>
+                  <p className="">Based on your verified traits, you are elligible to join this bounty!</p>
+                  <p className="text-xs pt-3">{time.toLocaleString()}</p>
                 </div>
-              )
+              );
             })}
           </div>
         )}
