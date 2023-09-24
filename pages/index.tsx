@@ -25,37 +25,48 @@ const Home = ({ user }) => {
   },
 }); 
  // Getting the account -- Use register before attempting to subscribe
- const { setAccount, register: registerIdentity, identityKey } = useW3iAccount()
- 
+ const { account, setAccount, register: registerIdentity, identityKey } = useW3iAccount()
  const { signMessageAsync } = useSignMessage();
  
  // Checking if subscribed
- const { subscribe, isSubscribed } = useManageSubscription(user?.ethAddress)
+ const { subscribe, isSubscribed } = useManageSubscription(account)
  
  // Get the subscription
  const { subscription } = useSubscription()
  
  const { messages } = useMessages()
  
+ const signMessage = useCallback(
+  async (message: string) => {
+    const res = await signMessageAsync({
+      message,
+    });
+
+    return res as string;
+  },
+  [signMessageAsync]
+);
+
   useEffect(() => {
     if (!address) return
     setAccount(`eip155:1:${address}`);
- }, [address, setAccount,]);
+ }, [signMessage, address, setAccount,]);
 
  const handleRegistration = useCallback(async () => {
-   if (!address) return;
-   try {
-     await registerIdentity(signMessageAsync);
-   } catch (registerIdentityError) {
-     console.error({ registerIdentityError });
-   }
- }, [signMessageAsync, registerIdentity, address]);
+  if (!account) return;
+  console.log("handleRegistration")
+  try {
+    await registerIdentity(signMessage);
+  } catch (registerIdentityError) {
+    console.error({ registerIdentityError });
+  }
+}, [signMessage, registerIdentity, account]);
 
  useEffect(() => {
-   if (!identityKey) {
-     handleRegistration();
-   }
- }, [handleRegistration, identityKey]);
+  if (!identityKey) {
+    handleRegistration();
+  }
+}, [handleRegistration, identityKey]);
 
  // -----
 
@@ -238,10 +249,21 @@ const Home = ({ user }) => {
               <BountyCard bounty={bounty} />
             ))}
             {filteredBounties.length === 0 && query === "" && (
-              <p>No bounties have been created yet! isRead:{isReady} test: {isSubscribed}</p>
+              <p>No bounties have been created yet! isRead:{isReady} test: {isSubscribed}  <Button
+              onClick={subscribe}
+              colorScheme="cyan"
+              rounded="full"
+              variant="outline"
+              w="fit-content"
+              alignSelf="center"
+              loadingText="Subscribing..."
+            >
+              Subscribe
+            </Button></p>
             )}
           </div>
         </div>
+       
       </section>
       <div className='absolute bg-blue-500 flex bottom-0 mb-[190px] right-0'>
         <p>asjkdhasdasdasd</p>
