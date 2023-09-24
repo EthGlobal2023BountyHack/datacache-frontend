@@ -14,9 +14,9 @@ const Dropdown = ({ text, options = [], className = '', ...rest }) => {
         onClick={handleToggleDropdown}
         className="flex items-center justify-between border-[1px] border-solid border-[#252525] w-full h-[40px] sm:h-[56px]"
       >
-        <div className="flex items-center px-2 border-r-[1px] border-solid border-[#252525] w-[80%] h-full">
-          <div className="rounded-full w-2 h-2 bg-lime ml-1 mr-2 shrink-0 "></div>
-          <span className="truncate overflow-hidden whitespace-nowrap">{text}</span>
+        <div className="relative top-[3px] flex items-center px-2 border-r-[1px] border-solid border-[#252525] w-[82%] h-full">
+          <div className="rounded-full w-2 h-2 bg-lime ml-1 mr-2 shrink-0" />
+          <div className="w-full text-left">{text}</div>
         </div>
 
         <div className="flex flex-grow justify-center">

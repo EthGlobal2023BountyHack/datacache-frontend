@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { WagmiConfig, createConfig } from 'wagmi';
-import { polygon, base } from 'wagmi/chains'
+import { polygon, base, polygonZkEvm, mantle, scrollSepolia } from 'wagmi/chains';
 import { ConnectKitProvider, SIWESession, getDefaultConfig } from 'connectkit';
 import { useRouter } from 'next/router';
 import { siweClient } from '@lib/siweClient';
@@ -12,7 +12,7 @@ import '@/styles/globals.scss';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 const ckCustomTheme = {
-  '--ck-font-family': 'Space Grotesk',
+  '--ck-font-family': 'Saira',
   '--ck-modal-heading-font-weight': 600,
   '--ck-body-color': '#FFFFFF',
   '--ck-body-color-muted': '#FFFFFF',
@@ -79,6 +79,7 @@ const ckCustomTheme = {
 
 const WithUser = ({ Component, route, ...props }) => {
   const router = useRouter();
+  const [isReady, setIsReady] = useState(false);
 
   const [user, setUser] = useState({ user: null, isLoading: true });
 
@@ -97,6 +98,7 @@ const WithUser = ({ Component, route, ...props }) => {
 
   useEffect(() => {
     refresh();
+    setIsReady(true);
   }, []);
 
   const onWeb3SignIn = async (session?: SIWESession) => {
@@ -178,9 +180,9 @@ const WithUser = ({ Component, route, ...props }) => {
             walletConnectName: 'Other Wallets',
           }}
         >
-          <XMTPProvider>
+          {isReady ? (
             <Component {...props} user={user?.user} onWeb2SignIn={onWeb2SignIn} onRefreshUser={refresh} />
-          </XMTPProvider>
+          ) : null}
         </ConnectKitProvider>
       </siweClient.Provider>
       <ToastContainer
@@ -201,32 +203,34 @@ const config = createConfig(
     alchemyId: process.env.NEXT_PUBLIC_ALCHEMY_KEY,
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
     appName: 'Datacache',
-    chains: [polygon, base]
+    chains: [polygon, base, polygonZkEvm, mantle, scrollSepolia],
   }),
 );
 
-const DatacacheApp = ({ Component, pageProps, router }) => (
-  <WagmiConfig config={config}>
-    <DefaultSeo
-      defaultTitle={seoConfig.defaultTitle}
-      titleTemplate={`%s | ${seoConfig.defaultTitle}`}
-      description={seoConfig.description}
-      openGraph={{
-        type: 'website',
-        locale: 'en_EN',
-        url: `${seoConfig.baseURL}${router.route}`,
-        siteName: 'Datacache',
-        title: 'Datacache',
-        description: seoConfig.description,
-        images: [],
-      }}
-      twitter={{
-        handle: '@',
-        cardType: 'summary_large_image',
-      }}
-    />
-    <WithUser Component={Component} route={router.route} {...pageProps} />
-  </WagmiConfig>
-);
+const DatacacheApp = ({ Component, pageProps, router }) => {
+  return (
+    <WagmiConfig config={config}>
+      <DefaultSeo
+        defaultTitle={seoConfig.defaultTitle}
+        titleTemplate={`%s | ${seoConfig.defaultTitle}`}
+        description={seoConfig.description}
+        openGraph={{
+          type: 'website',
+          locale: 'en_EN',
+          url: `${seoConfig.baseURL}${router.route}`,
+          siteName: 'Datacache',
+          title: 'Datacache',
+          description: seoConfig.description,
+          images: [],
+        }}
+        twitter={{
+          handle: '@',
+          cardType: 'summary_large_image',
+        }}
+      />
+      <WithUser Component={Component} route={router.route} {...pageProps} />
+    </WagmiConfig>
+  );
+};
 
 export default DatacacheApp;

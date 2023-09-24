@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import classnames from 'classnames';
-import { useDisconnect } from 'wagmi';
+import { useDisconnect, useNetwork } from 'wagmi';
 import { useScroll, Image, Button } from '@components';
 import { ErrorBoundary } from 'react-error-boundary';
 import { UserContext } from '@/context/UserContext';
 import { MdNotifications as BellIcon, MdMenu as HamburgerMenu } from 'react-icons/md';
 import Dropdown from './Dropdown';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 function fallbackRender({ error }) {
   return (
@@ -22,13 +22,37 @@ type NavbarProps = {
   openLoginModal: () => void;
 };
 
+const opening = {
+  braces: '{',
+  brackets: '[',
+  parenthesis: '(',
+};
+
+const closing = {
+  braces: '}',
+  brackets: ']',
+  parenthesis: ')',
+};
+
+export function truncate(address: string, { nPrefix, nSuffix, separator } = {}) {
+  if (!address) return;
+  const match = address.match(/^(0x[a-zA-Z0-9])[a-zA-Z0-9]+([a-zA-Z0-9])$/);
+  const nTotalIsLongerThanAddress = (nPrefix || 0) + (nSuffix || 0) > address.length;
+
+  return match && !nTotalIsLongerThanAddress
+    ? `0x${address.slice(2, 2 + (nPrefix || 4))}${separator ? opening[separator] : ''}…${
+        separator ? closing[separator] : ''
+      }${address.slice(address.length - (nSuffix || 4))}`
+    : address;
+}
+
 const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginModal }) => {
   const [{ user }, setUser] = useContext(UserContext);
   const [isHidden, setIsHidden] = useState(isHeaderTransparent);
   const { disconnect } = useDisconnect();
   const { scrollY } = useScroll();
   const [isNewNotification, setIsNewNotification] = useState(true);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     if (!isHeaderTransparent) return;
@@ -48,6 +72,8 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
     setUser({});
   };
 
+  const { chain: currentChain } = useNetwork();
+
   return (
     <ErrorBoundary fallbackRender={fallbackRender}>
       <div
@@ -58,23 +84,31 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
       >
         {/* Left Section */}
         <div className="flex shrink-0 w-1/2 sm:w-1/4">
-          <h1 className="uppercase text-lg font-black">DataCache</h1>
+          <h1 className="uppercase text-lg font-black">Datacache</h1>
         </div>
         {/* Center Section */}
-        <div className="hidden lg:flex justify-center flex-grow w-1/2 gap-5 h-[100%]">
+        <div className="hidden lg:flex justify-center flex-grow w-1/2 gap-5 h-[50px]">
           <button
-            className={classnames(
-              { 'border-b-[1px] pt-[1px]': router.pathname === '/' }
-            )}
-            onClick={() => { router.push('/') }}
+            className={classnames('transition-all duration-300', {
+              'font-semibold opacity-100 border-b-[2px] pt-[1px] text-[#0074F0] border-[#0074F0]':
+                router.pathname === '/',
+              'opacity-80': router.pathname !== '/',
+            })}
+            onClick={() => {
+              router.push('/');
+            }}
           >
             Bounties
           </button>
           <button
-            className={classnames(
-              { 'border-b-[1px] pt-[1px]': router.pathname === '/dashboard' }
-            )}
-            onClick={() => { router.push('/dashboard') }}
+            className={classnames('transition-all duration-300', {
+              'font-semibold opacity-100 border-b-[2px] pt-[1px] text-[#0074F0] border-[#0074F0]':
+                router.pathname === '/dashboard',
+              'opacity-80': router.pathname !== '/dashboard',
+            })}
+            onClick={() => {
+              router.push('/dashboard');
+            }}
           >
             Dashboard
           </button>
@@ -88,7 +122,16 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
               <BellIcon width={32} height={32} className="hidden xl:block mr-[36px]" /> */}
               <Dropdown
                 className="font-bold w-[111px] sm:w-[239px]"
-                text={user?.displayName || user?.ethAddress || user?.email}
+                text={
+                  <div className="relative flex flex-col jusitfy-center h-full w-full">
+                    <span className="absolute top-[-15px] left-0 text-center text-white/60 text-[12px] z-[2]">
+                      {currentChain?.name || 'N/A'}
+                    </span>
+                    <span className="truncate w-full">
+                      {user?.displayName || truncate(user?.ethAddress) || user?.email}
+                    </span>
+                  </div>
+                }
                 options={[
                   {
                     label: 'Profile',
@@ -104,25 +147,11 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
           ) : (
             <div className="flex flex-row gap-3">
               <button
-                className='border-[1px] border-solid border-[#252525] px-5 py-1'
-                onClick={() => {
-
-                }}
-              >
-                Sign up
-              </button>
-              <button
-                className='border-[1px] border-solid border-[#252525] px-5 py-1 bg-[#131313]'
+                className="border-[1px] border-solid border-[#252525] hover:bg-[#0074F0] hover:text-white px-5 py-2 bg-[#131313]"
                 onClick={openLoginModal}
               >
                 Log In
               </button>
-              {/* <Button className="hidden lg:block" onClick={() => {}} size="sm" variant="secondary">
-                Sign Up
-              </Button>
-              <Button onClick={openLoginModal} className="" size="sm">
-                Log In
-              </Button> */}
             </div>
           )}
           <div className="lg:hidden ml-[8px]">

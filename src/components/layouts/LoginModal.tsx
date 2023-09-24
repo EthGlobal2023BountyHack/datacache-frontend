@@ -20,12 +20,12 @@ const LoginForm = ({ onWeb2SignIn, onCloseForm }) => {
       >
         <Form className="flex w-full max-w-2xl flex-col items-center justify-center space-y-2 sm:space-y-4 md:w-[350px]">
           <input
-            className="mt-2 h-[56px] rounded-[4px] border-[1px] border-secondary-lightGrey-300 bg-primary-dark px-4 text-lg text-primary placeholder:opacity-80"
+            className="mt-2 w-full h-[56px] rounded-[4px] border-[1px] border-secondary-lightGrey-300 bg-primary-dark px-4 text-lg text-primary placeholder:opacity-80"
             id="email"
             name="email"
             placeholder="Your email address"
           />
-          <Button>Log In</Button>
+          <Button className="w-full">Log In</Button>
         </Form>
       </Formik>
       <div className="flex w-full max-w-2xl flex-row items-center space-x-8 py-2 font-header uppercase md:w-[350px]">

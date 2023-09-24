@@ -8,7 +8,10 @@ const Layout = ({ children, isHeaderTransparent = false }, ref) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   return (
-    <div ref={ref} className="min-w-screen relative flex min-h-screen flex-col font-paragraph text-primary-light bg-black">
+    <div
+      ref={ref}
+      className="min-w-screen relative flex min-h-screen flex-col font-paragraph text-primary-light bg-black"
+    >
       {isLoginModalOpen && <LoginModal setIsLoginModalOpen={setIsLoginModalOpen} />}
       <header className="sticky top-0 z-[99] flex h-0 w-full flex-row items-center pb-navbarHeight">
         <Navbar openLoginModal={() => setIsLoginModalOpen(true)} isHeaderTransparent={isHeaderTransparent} />
