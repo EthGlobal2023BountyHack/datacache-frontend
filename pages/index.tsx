@@ -1,61 +1,15 @@
 import { Button, Layout } from '@/components';
-import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa'
-import { HiEllipsisVertical } from 'react-icons/hi2'
+import { FaDiscord as DiscordLogo, FaTwitter as TwitterLogo } from 'react-icons/fa'
 import { TfiSearch } from 'react-icons/tfi'
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { useContractRead, useNetwork } from 'wagmi'
 import { marketplaceContract } from '@lib/constants';
 import { MetaMaskAvatar } from 'react-metamask-avatar';
 import BountyCard from '@/components/layouts/BountyCard';
 
-import { useManageSubscription, useSubscription, useW3iAccount, useInitWeb3InboxClient, useMessages } from "@web3inbox/widget-react";
-import { useSignMessage, useAccount } from 'wagmi'
-
 const Home = ({ user }) => {
-
- // -----
-
- const isReady = useInitWeb3InboxClient({projectId: "418e276fdef7a308d3399d8598b7e135", domain: "datacache.ecalculator.pro" })
-  
- const { account } = useAccount();
- 
- // Getting the account -- Use register before attempting to subscribe
- const { setAccount, register: registerIdentity, identityKey } = useW3iAccount()
- 
- const { signMessageAsync } = useSignMessage();
- 
- // Checking if subscribed
- const { subscribe, isSubscribed } = useManageSubscription(user?.ethAddress)
- 
- // Get the subscription
- const { subscription } = useSubscription()
- 
- const { messages } = useMessages()
- 
-  useEffect(() => {
-    if (!user) return
-    setAccount(`eip155:1:${user.ethAddress}`);
- }, [user, setAccount]);
-
- const handleRegistration = useCallback(async () => {
-   if (!account) return;
-   try {
-     await registerIdentity(signMessageAsync);
-   } catch (registerIdentityError) {
-     console.error({ registerIdentityError });
-   }
- }, [signMessageAsync, registerIdentity, account]);
-
- useEffect(() => {
-   if (!identityKey) {
-     handleRegistration();
-   }
- }, [handleRegistration, identityKey]);
-
- // -----
-
   const [ensName, setEnsName] = useState(null);
   const [tags, setTags] = useState([])
   const [query, setQuery] = useState("")
@@ -106,20 +60,11 @@ const Home = ({ user }) => {
   }, [query])
 
   useEffect(() => {
-    console.log("isReady before", isReady)
-
-    if (!isReady) return
-    console.log("isReady", isReady)
-    subscribe()
-  }, [isReady])
-
-  useEffect(() => {
     (async function () {
       if (!user) return
 
       const { list } = await fetch(`https://datacache.ecalculator.pro/api/wallet/tag/list/?address=${user.ethAddress}`)
         .then(res => res.json())
-      console.log("list", list)
       setTags(list)
 
       const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_PROVIDER_URL);
@@ -233,7 +178,7 @@ const Home = ({ user }) => {
               <BountyCard bounty={bounty} />
             ))}
             {filteredBounties.length === 0 && query === "" && (
-              <p>No bounties have been created yet! isRead:{isReady} test: {isSubscribed}</p>
+              <p>No bounties have been created yet!</p>
             )}
           </div>
         </div>
