@@ -70,14 +70,6 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
             )}
             onClick={() => { router.push('/') }}
           >
-            Home
-          </button>
-          <button
-            className={classnames(
-              { 'border-b-[1px] pt-[1px]': router.pathname === '/bounties' }
-            )}
-            onClick={() => { router.push('/bounties') }}
-          >
             Bounties
           </button>
           <button
@@ -88,15 +80,6 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
           >
             Dashboard
           </button>
-          {/* <Button onClick={() => { router.push('/') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
-            Home
-          </Button>
-          <Button onClick={() => { router.push('/bounties') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
-            Bounties
-          </Button>
-          <Button onClick={() => { router.push('/dashboard') }} size="sm" variant="tertiary" className="!text-[20px] !leading-[25.52px]">
-            Dashboard
-          </Button> */}
         </div>
 
         {/* Right Section */}
@@ -124,7 +107,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
             <div className="flex flex-row gap-3">
               <button
                 className='border-[1px] border-solid border-[#252525] px-5 py-1'
-                onClick={() => { 
+                onClick={() => {
 
                 }}
               >

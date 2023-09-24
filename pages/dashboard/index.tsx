@@ -84,10 +84,16 @@ const Dashboard = ({ user }) => {
           <TfiPlus />
           Create Bounty
         </button>
-        <div className='flex gap-3 flex-wrap'>
+        <div className={classnames(
+          'flex gap-3 flex-wrap',
+          { 'justify-center': bounties.length === 0 }
+        )}>
           {filteredBounties.map(bounty => (
             <BountyCard bounty={bounty} />
           ))}
+          {bounties.length === 0 && (
+            <div className=''>No bounties have been created yet!</div>
+          )}
         </div>
       </section>
       {showModal && (

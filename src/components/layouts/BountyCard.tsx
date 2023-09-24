@@ -1,4 +1,4 @@
-import { FaUserCircle } from 'react-icons/fa'
+import { FaUserCircle, FaMicrosoft } from 'react-icons/fa'
 import classnames from 'classnames';
 import { HiEllipsisVertical } from 'react-icons/hi2';
 import { useContractRead } from 'wagmi';
@@ -20,6 +20,14 @@ const BountyCard = ({ bounty }) => {
 
     console.log("owner", owner)
   }, [isLoading])
+
+  const renderIcon = (icon) => {
+    const Icon = icon
+
+    return (
+      <Icon size={35}/>
+    )
+  }
 
   const dotFormatter = (x) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -93,9 +101,9 @@ const BountyCard = ({ bounty }) => {
         {router.pathname !== "/dashboard" && (
           <p>From {owner}</p>
         )}
-        {/* <div className='bg-yellow-500 p-2 rounded-sm'>
-          {renderIcon(bounty.icon)}
-        </div> */}
+        <div className='p-2 rounded-sm'>
+          {renderIcon(FaMicrosoft)}
+        </div>
       </div>
     </div>
   )
