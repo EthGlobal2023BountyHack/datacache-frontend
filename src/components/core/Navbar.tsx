@@ -91,13 +91,13 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
                 text={user?.displayName || user?.ethAddress || user?.email}
                 options={[
                   {
+                    label: 'Profile',
+                    callback: () => router.push('/profile'),
+                  },
+                  {
                     label: 'Log Out',
                     callback: () => handleLogOut(),
                   },
-                  // {
-                  //   label: 'Option 2',
-                  //   callback: () => console.log('option2'),
-                  // },
                 ]}
               />
             </div>
