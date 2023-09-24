@@ -3,14 +3,59 @@ import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMic
 import { HiEllipsisVertical } from 'react-icons/hi2'
 import { TfiSearch } from 'react-icons/tfi'
 import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { useContractRead, useNetwork } from 'wagmi'
 import { marketplaceContract } from '@lib/constants';
 import { MetaMaskAvatar } from 'react-metamask-avatar';
 import BountyCard from '@/components/layouts/BountyCard';
 
+import { useManageSubscription, useSubscription, useW3iAccount, useInitWeb3InboxClient, useMessages } from "@web3inbox/widget-react";
+import { useSignMessage, useAccount } from 'wagmi'
+
 const Home = ({ user }) => {
+
+ // -----
+
+ const isReady = useInitWeb3InboxClient({projectId: "418e276fdef7a308d3399d8598b7e135", domain: "datacache.ecalculator.pro" })
+  
+ const { account } = useAccount();
+ 
+ // Getting the account -- Use register before attempting to subscribe
+ const { setAccount, register: registerIdentity, identityKey } = useW3iAccount()
+ 
+ const { signMessageAsync } = useSignMessage();
+ 
+ // Checking if subscribed
+ const { subscribe, isSubscribed } = useManageSubscription(user?.ethAddress)
+ 
+ // Get the subscription
+ const { subscription } = useSubscription()
+ 
+ const { messages } = useMessages()
+ 
+  useEffect(() => {
+    if (!user) return
+    setAccount(`eip155:1:${user.ethAddress}`);
+ }, [user, setAccount]);
+
+ const handleRegistration = useCallback(async () => {
+   if (!account) return;
+   try {
+     await registerIdentity(signMessageAsync);
+   } catch (registerIdentityError) {
+     console.error({ registerIdentityError });
+   }
+ }, [signMessageAsync, registerIdentity, account]);
+
+ useEffect(() => {
+   if (!identityKey) {
+     handleRegistration();
+   }
+ }, [handleRegistration, identityKey]);
+
+ // -----
+
   const [ensName, setEnsName] = useState(null);
   const [tags, setTags] = useState([])
   const [query, setQuery] = useState("")
@@ -59,6 +104,14 @@ const Home = ({ user }) => {
     const matchedBounties = bounties.filter(({ name, rewardTotal }) => name.toLowerCase().includes(query) && rewardTotal > 0)
     setFilteredBounties(elligibleBounties(matchedBounties))
   }, [query])
+
+  useEffect(() => {
+    console.log("isReady before", isReady)
+
+    if (!isReady) return
+    console.log("isReady", isReady)
+    subscribe()
+  }, [isReady])
 
   useEffect(() => {
     (async function () {
@@ -180,11 +233,14 @@ const Home = ({ user }) => {
               <BountyCard bounty={bounty} />
             ))}
             {filteredBounties.length === 0 && query === "" && (
-              <p>No bounties have been created yet!</p>
+              <p>No bounties have been created yet! isRead:{isReady} test: {isSubscribed}</p>
             )}
           </div>
         </div>
       </section>
+      <div className='absolute bg-blue-500 flex bottom-0 mb-[190px] right-0'>
+        <p>asjkdhasdasdasd</p>
+      </div>
     </Layout>
   )
 }

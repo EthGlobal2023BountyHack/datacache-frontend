@@ -31,8 +31,6 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
   const router = useRouter()
 
   useEffect(() => {
-    console.log("user", user)
-
     if (!isHeaderTransparent) return;
     scrollY.on('change', (latest) => {
       if (latest < 1) {
