@@ -1,15 +1,81 @@
 import { Button, Layout } from '@/components';
-import { FaDiscord as DiscordLogo, FaTwitter as TwitterLogo } from 'react-icons/fa'
-import { TfiSearch } from 'react-icons/tfi'
+import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa'
+import { HiEllipsisVertical } from 'react-icons/hi2'
+import { TfiClose, TfiSearch } from 'react-icons/tfi'
 import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import classnames from 'classnames';
 import { useContractRead, useNetwork } from 'wagmi'
 import { marketplaceContract } from '@lib/constants';
 import { MetaMaskAvatar } from 'react-metamask-avatar';
 import BountyCard from '@/components/layouts/BountyCard';
+import {
+  useInitWeb3InboxClient,
+  useManageSubscription,
+  useW3iAccount,
+  useMessages,
+  useSubscription
+} from "@web3inbox/widget-react";
+import { useAccount, usePublicClient, useSignMessage } from "wagmi";
 
 const Home = ({ user }) => {
+
+ // -----
+
+ const isReady = useInitWeb3InboxClient({projectId: "418e276fdef7a308d3399d8598b7e135", domain: "datacache.ecalculator.pro" })
+  
+ const { address } = useAccount({
+  onDisconnect: () => {
+    setAccount("");
+  },
+}); 
+ // Getting the account -- Use register before attempting to subscribe
+ const { account, setAccount, register: registerIdentity, identityKey } = useW3iAccount()
+ const { signMessageAsync } = useSignMessage();
+ 
+ // Checking if subscribed
+ const { subscribe, isSubscribed } = useManageSubscription(account)
+ 
+ // Get the subscription
+ const { subscription } = useSubscription()
+ 
+ const { messages } = useMessages()
+ 
+ const signMessage = useCallback(
+  async (message: string) => {
+    const res = await signMessageAsync({
+      message,
+    });
+
+    return res as string;
+  },
+  [signMessageAsync]
+);
+
+  useEffect(() => {
+    if (!address) return
+    setAccount(`eip155:1:${address}`);
+ }, [signMessage, address, setAccount,]);
+
+ const handleRegistration = useCallback(async () => {
+  if (!account) return;
+  console.log("handleRegistration")
+  try {
+    await registerIdentity(signMessage);
+  } catch (registerIdentityError) {
+    console.error({ registerIdentityError });
+  }
+}, [signMessage, registerIdentity, account]);
+
+ useEffect(() => {
+  if (!identityKey) {
+    handleRegistration();
+  }
+}, [handleRegistration, identityKey]);
+
+ // -----
+
+  const [isMessageOpen, setIsMessageOpen] = useState(false)
   const [ensName, setEnsName] = useState(null);
   const [tags, setTags] = useState([])
   const [query, setQuery] = useState("")
@@ -40,7 +106,7 @@ const Home = ({ user }) => {
   const { chain, chains } = useNetwork()
 
   const elligibleBounties = (bounties) => {
-    return bounties.filter(({ rewardTotal }) => rewardTotal.toNumber() > 0)
+    return bounties?.filter(({ rewardTotal }) => rewardTotal.toNumber() > 0)
   }
 
   useEffect(() => {
@@ -55,9 +121,19 @@ const Home = ({ user }) => {
       return
     }
 
-    const matchedBounties = bounties.filter(({ name, rewardTotal }) => name.toLowerCase().includes(query) && rewardTotal > 0)
+    const matchedBounties = bounties?.filter(({ name, rewardTotal }) => name.toLowerCase().includes(query) && rewardTotal > 0)
     setFilteredBounties(elligibleBounties(matchedBounties))
   }, [query])
+
+  useEffect(() => {
+    console.log("isReady before", isReady)
+
+    if (!isReady) return
+    console.log("isReady", isReady)
+    if (!Boolean(address)) return;
+    // setAccount(`eip155:1:${address}`);
+    subscribe()
+  }, [isReady])
 
   useEffect(() => {
     (async function () {
@@ -182,9 +258,51 @@ const Home = ({ user }) => {
             )}
           </div>
         </div>
+       
       </section>
-      <div className='absolute bg-blue-500 flex bottom-0 mb-[190px] right-0'>
-        <p>asjkdhasdasdasd</p>
+      <div className='absolute flex bottom-0 mb-[100px] right-10 hover:cursor-pointer w-[500px] flex flex-col bg-black'>
+        <button
+          onClick={() => { setIsMessageOpen(prev => !prev) }}
+          >
+          <div className={classnames(
+            'border-x-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
+            { 'border-b-[1px]': isMessageOpen }
+          )}>
+            <div className='flex items-center gap-x-3'>
+              <p>Messages</p>
+              <button
+                className='border-[1px] border-solid border-[#252525] px-4 py-1'
+                onClick={subscribe}
+              >
+                Subscribe  
+              </button>
+            </div>
+            <TfiClose />
+          </div>
+        </button>
+        {isMessageOpen && (
+          <div className='border-x-[1px] border-solid border-[#252525] h-[400px] px-5 py-3 overflow-auto'>
+            {messages.map(({ message: { body } }) => {
+              if (body[0] !== "{") return
+
+              const parsedMessage = JSON.parse(body)
+
+              if (Object.keys(parsedMessage).length !== 2) return
+              if (Object.keys(parsedMessage).includes('bountyId')) return
+
+              const time = new Date(parsedMessage.timestamp * 1000)
+
+              return (
+                <div className='border-[1px] border-solid border-[#252525] max-w-[400px] p-2 mb-3'>
+                  <p className='font-bold'>{ bounties?.filter(({ bountyId }) => bountyId === body.bountyId)[0]?.name }</p>
+                  <p className=''>Based on your verified traits, you are elligible to join this bounty!</p>
+                  <p className='text-xs pt-3'>{ time.toLocaleString() }</p>
+                  <p>{body}</p>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
     </Layout>
   )
