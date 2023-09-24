@@ -2,10 +2,16 @@ import { CredentialType, IDKitWidget } from '@worldcoin/idkit';
 import type { ISuccessResult } from '@worldcoin/idkit';
 import type { VerifyReply } from '../../../../pages/api/worldcoin/verify';
 import { toast } from 'react-toastify';
-import { useContext } from 'react';
+import { Dispatch, SetStateAction, useContext } from 'react';
 import { UserContext } from '@/context/UserContext';
 
-export default function SignInWithWorldcoin() {
+type SignInWithWorldcoinProps = {
+  worldcoinVerified: boolean;
+  setWorldcoinVerified: Dispatch<SetStateAction<boolean>>;
+};
+export default function SignInWithWorldcoin(SignInWithWorldcoinProps) {
+  const { worldcoinVerified, setWorldcoinVerified } = SignInWithWorldcoinProps;
+
   /*
   const [{ user }, setUser] = useContext(UserContext);
   */
@@ -17,6 +23,7 @@ export default function SignInWithWorldcoin() {
   const onSuccess = (result: ISuccessResult) => {
     // This is where you should perform frontend actions once a user has been verified, such as redirecting to a new page
     toast('Successfully Verified with Worldcoin');
+    setWorldcoinVerified(true);
   };
 
   const handleProof = async (result: ISuccessResult) => {
@@ -47,7 +54,10 @@ export default function SignInWithWorldcoin() {
   };
 
   return (
-    user && (
+    user &&
+    (worldcoinVerified ? (
+      <p className="text-green-500">Verified</p>
+    ) : (
       <IDKitWidget
         action={process.env.NEXT_PUBLIC_WLD_ACTION_NAME!}
         app_id={process.env.NEXT_PUBLIC_WLD_APP_ID!}
@@ -57,11 +67,11 @@ export default function SignInWithWorldcoin() {
         autoClose
       >
         {({ open }) => (
-          <button className="border border-black rounded-md" onClick={open}>
+          <button className="border my-1 rounded-md" onClick={open}>
             <div className="mx-3 my-1">Verify with World ID</div>
           </button>
         )}
       </IDKitWidget>
-    )
+    ))
   );
 }
