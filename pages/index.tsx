@@ -1,61 +1,74 @@
 import { Button, Layout } from '@/components';
 import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa';
 import { HiEllipsisVertical } from 'react-icons/hi2';
-import { TfiSearch } from 'react-icons/tfi';
+import { TfiClose, TfiSearch } from 'react-icons/tfi';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import classnames from 'classnames';
-import { useAccount, useNetwork, useContractRead, useSignMessage } from 'wagmi';
 import { chainIdToContractMapping } from '@lib/constants';
 import { MetaMaskAvatar } from 'react-metamask-avatar';
 import BountyCard from '@/components/layouts/BountyCard';
 import {
-  useManageSubscription,
-  useSubscription,
-  useW3iAccount,
   useInitWeb3InboxClient,
+  useManageSubscription,
+  useW3iAccount,
   useMessages,
+  useSubscription,
 } from '@web3inbox/widget-react';
+import { useAccount, useContractRead, useSignMessage, useNetwork } from 'wagmi';
 
 const Home = ({ user }) => {
-  // -----
-
   const isReady = useInitWeb3InboxClient({
     projectId: '418e276fdef7a308d3399d8598b7e135',
     domain: 'datacache.ecalculator.pro',
   });
 
-  const { account } = useAccount();
   const { chain: currentChain } = useNetwork();
 
   const marketplaceContract = chainIdToContractMapping[currentChain?.id];
 
+  const { address } = useAccount({
+    onDisconnect: () => {
+      setAccount('');
+    },
+  });
   // Getting the account -- Use register before attempting to subscribe
-  const { setAccount, register: registerIdentity, identityKey } = useW3iAccount();
-
+  const { account, setAccount, register: registerIdentity, identityKey } = useW3iAccount();
   const { signMessageAsync } = useSignMessage();
 
   // Checking if subscribed
-  const { subscribe, isSubscribed } = useManageSubscription(user?.ethAddress);
+  const { subscribe, isSubscribed } = useManageSubscription(account);
 
   // Get the subscription
   const { subscription } = useSubscription();
 
   const { messages } = useMessages();
 
+  const signMessage = useCallback(
+    async (message: string) => {
+      const res = await signMessageAsync({
+        message,
+      });
+
+      return res as string;
+    },
+    [signMessageAsync],
+  );
+
   useEffect(() => {
-    if (!user) return;
-    setAccount(`eip155:1:${user.ethAddress}`);
-  }, [user, setAccount]);
+    if (!address) return;
+    setAccount(`eip155:1:${address}`);
+  }, [signMessage, address, setAccount]);
 
   const handleRegistration = useCallback(async () => {
     if (!account) return;
+    console.log('handleRegistration');
     try {
-      await registerIdentity(signMessageAsync);
+      await registerIdentity(signMessage);
     } catch (registerIdentityError) {
       console.error({ registerIdentityError });
     }
-  }, [signMessageAsync, registerIdentity, account]);
+  }, [signMessage, registerIdentity, account]);
 
   useEffect(() => {
     if (!identityKey) {
@@ -63,8 +76,7 @@ const Home = ({ user }) => {
     }
   }, [handleRegistration, identityKey]);
 
-  // -----
-
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [ensName, setEnsName] = useState(null);
   const [tags, setTags] = useState([]);
   const [query, setQuery] = useState('');
@@ -194,43 +206,6 @@ const Home = ({ user }) => {
             )}
           </div>
           {user && (
-            <div className="pb-4 flex gap-4">
-              <div className="border-[1px] border-solid border-[#252525] rounded-full">
-                <Button
-                  className="text-2xl p-2"
-                  onClick={() => {}}
-                  size="auto"
-                  variant="tertiary"
-                  link={{ href: 'https://discord.gg/', target: '_blank' }}
-                >
-                  <DiscordLogo size={25} />
-                </Button>
-              </div>
-              <div className="border-[1px] border-solid border-[#252525] rounded-full">
-                <Button
-                  className="text-2xl p-2"
-                  onClick={() => {}}
-                  size="auto"
-                  variant="tertiary"
-                  link={{ href: 'https://discord.gg/', target: '_blank' }}
-                >
-                  <TwitterLogo size={25} />
-                </Button>
-              </div>
-              <div className="border-[1px] border-solid border-[#252525] rounded-full">
-                <Button
-                  className="p-2"
-                  onClick={() => {}}
-                  size="auto"
-                  variant="tertiary"
-                  link={{ href: 'https://discord.gg/', target: '_blank' }}
-                >
-                  <img className="max-w-[25px]" src="/images/lens-logo.svg" alt="neo city map" />
-                </Button>
-              </div>
-            </div>
-          )}
-          {user && (
             <div className="flex gap-1 flex-wrap px-3 justify-center">
               {tags.slice(0, 5).map((tag) => (
                 <p className="border-[1px] border-solid border-[#252525] px-4 text-white bg-[#131313]">{tag.name}</p>
@@ -264,8 +239,48 @@ const Home = ({ user }) => {
           </div>
         </div>
       </section>
-      <div className="absolute bg-blue-500 flex bottom-0 mb-[190px] right-0">
-        <p>asjkdhasdasdasd</p>
+      <div className="absolute flex bottom-0 mb-[120px] right-10 hover:cursor-pointer w-[500px] flex flex-col bg-black">
+        <button
+          onClick={() => {
+            setIsMessageOpen((prev) => !prev);
+          }}
+        >
+          <div
+            className={classnames(
+              'border-x-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
+              { 'border-b-[1px]': isMessageOpen },
+            )}
+          >
+            <div className="flex items-center gap-x-3">
+              <p>Messages</p>
+              <button className="border-[1px] border-solid border-[#252525] px-4 py-1" onClick={subscribe}>
+                Subscribe
+              </button>
+            </div>
+            <TfiClose />
+          </div>
+        </button>
+        {isMessageOpen && (
+          <div className="border-x-[1px] border-solid border-[#252525] h-[400px] px-5 py-3 overflow-auto">
+            {messages.map(({ message: { body } }) => {
+              if (body[0] !== '{') return;
+
+              const parsedMessage = JSON.parse(body);
+
+              if (!Object.keys(parsedMessage).includes('bountyId')) return;
+
+              const time = new Date(parsedMessage.timestamp * 1000);
+
+              return (
+                <div className="border-[1px] border-solid border-[#252525] max-w-[400px] p-2 mb-3">
+                  <p className="font-bold">{bounties?.filter(({ bountyId }) => bountyId === body.bountyId)[0]?.name}</p>
+                  <p className="">Based on your verified traits, you are elligible to join this bounty!</p>
+                  <p className="text-xs pt-3">{time.toLocaleString()}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </Layout>
   );

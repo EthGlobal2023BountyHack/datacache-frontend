@@ -7,6 +7,7 @@ import { siweClient } from '@lib/siweClient';
 import seoConfig from '@/seo';
 import { UserContext } from '@/context/UserContext';
 import { DefaultSeo, ToastContainer, toast } from '@/components';
+import { XMTPProvider } from '@xmtp/react-sdk';
 import '@/styles/globals.scss';
 import 'react-toastify/dist/ReactToastify.min.css';
 
