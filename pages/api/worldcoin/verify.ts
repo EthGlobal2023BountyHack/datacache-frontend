@@ -43,9 +43,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Verify
         // For this example, we'll just return a 200 response and console.log the verified credential
         console.log("Credential verified! This user's nullifier hash is: ", wldResponse.nullifier_hash);
 
-        console.log('sending to mongo');
+        //console.log('sending to mongo');
 
-        await updateMongoWithTag(reqBody.ethAddress);
+        //await updateMongoWithTag(reqBody.ethAddress);
 
         res.status(verifyRes.status).send({
           code: 'success',
