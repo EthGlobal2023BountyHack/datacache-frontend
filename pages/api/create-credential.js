@@ -15,8 +15,8 @@ const claimRequest = {
     persist: false,
     emailMessage: '',
     credential: {},
-    distribute: true
-  }
+    distribute: true,
+  },
 };
 
 const baseUrl = process.env.DOCK_API_URL;
@@ -34,8 +34,8 @@ export default async (req, res) => {
       schema: req.body.schema,
       credentialOptions: {
         ...claimRequest.credentialOptions,
-        credential: req.body
-      }
+        credential: req.body,
+      },
     };
     console.log(requestBody);
     const credentialResponse = await axios.post(`${baseUrl}/credentials/request-claims`, requestBody, axiosHeaders);
