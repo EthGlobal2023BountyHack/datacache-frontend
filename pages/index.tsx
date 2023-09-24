@@ -1,9 +1,9 @@
-import { Button, Layout } from '@/components';
+import { Button, Image, Layout } from '@/components';
 import { FaUserCircle, FaDiscord as DiscordLogo, FaTwitter as TwitterLogo, FaMicrosoft } from 'react-icons/fa';
 import { HiEllipsisVertical } from 'react-icons/hi2';
-import { TfiClose, TfiSearch } from 'react-icons/tfi';
+import { TfiClose, TfiSearch, TfiArrowCircleDown } from 'react-icons/tfi';
 import { ethers } from 'ethers';
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import classnames from 'classnames';
 import { chainIdToContractMapping } from '@lib/constants';
 import { MetaMaskAvatar } from 'react-metamask-avatar';
@@ -16,6 +16,30 @@ import {
   useSubscription,
 } from '@web3inbox/widget-react';
 import { useAccount, useContractRead, useSignMessage, useNetwork } from 'wagmi';
+
+const opening = {
+  braces: '{',
+  brackets: '[',
+  parenthesis: '(',
+};
+
+const closing = {
+  braces: '}',
+  brackets: ']',
+  parenthesis: ')',
+};
+
+export function truncate(address: string, { nPrefix, nSuffix, separator } = {}) {
+  if (!address) return;
+  const match = address.match(/^(0x[a-zA-Z0-9])[a-zA-Z0-9]+([a-zA-Z0-9])$/);
+  const nTotalIsLongerThanAddress = (nPrefix || 0) + (nSuffix || 0) > address.length;
+
+  return match && !nTotalIsLongerThanAddress
+    ? `0x${address.slice(2, 2 + (nPrefix || 4))}${separator ? opening[separator] : ''}…${
+        separator ? closing[separator] : ''
+      }${address.slice(address.length - (nSuffix || 4))}`
+    : address;
+}
 
 const Home = ({ user }) => {
   const isReady = useInitWeb3InboxClient({
@@ -181,7 +205,7 @@ const Home = ({ user }) => {
               <h1 className="uppercase text-4xl font-black">Datacache</h1>
               <p className="pt-5 leading-[32px]">
                 {`Control your data destiny with us! Upload your data securely, and our accredited issuers verify its
-                accuracy. Advertisers can set 'bounties' for specific data they need, and when you match their criteria,
+                accuracy. Anyone can create 'bounties' for specific data they need, and when you match their criteria,
                 you get paid. It's your data, your trust, and your reward, all in one app.`}
               </p>
             </div>
@@ -200,20 +224,30 @@ const Home = ({ user }) => {
                     { 'text-lg font-bold': ensName === null },
                   )}
                 >
-                  {user?.ethAddress.substring(0, 12)}...
+                  {truncate(user?.ethAddress)}
                 </p>
               </>
             )}
           </div>
           {user && (
             <div className="flex gap-1 flex-wrap px-3 justify-center">
-              {tags.slice(0, 5).map((tag) => (
-                <p className="border-[1px] border-solid border-[#252525] px-4 text-white bg-[#131313]">{tag.name}</p>
-              ))}
-              {tags.length > 5 && (
-                <p className="border-[1px] border-solid border-[#252525] px-4 text-white bg-[#131313]">
-                  {tags.length - 5}+
-                </p>
+              {tags.length > 0 ? (
+                <>
+                  {tags
+                    ?.slice(0, 5)
+                    .map((tag) => (
+                      <p className="border-[1px] border-solid border-[#252525] px-4 text-white bg-[#131313]">
+                        {tag.name}
+                      </p>
+                    ))}
+                  {tags?.length > 5 && (
+                    <p className="border-[1px] border-solid border-[#252525] px-4 text-white bg-[#131313]">
+                      {tags.length - 5}+
+                    </p>
+                  )}
+                </>
+              ) : (
+                <span className="text-white/60 ">No wallet tags</span>
               )}
             </div>
           )}
@@ -232,14 +266,12 @@ const Home = ({ user }) => {
           <div className="flex gap-3 flex-wrap items-center justify-center">
             {filteredBounties?.map((bounty) => <BountyCard bounty={bounty} />)}
             {filteredBounties?.length === 0 && query === '' && (
-              <p>
-                No bounties have been created yet! isRead:{isReady} test: {isSubscribed}
-              </p>
+              <p className="text-white/60">No bounties have been created yet!</p>
             )}
           </div>
         </div>
       </section>
-      <div className="absolute flex bottom-0 mb-[120px] right-10 hover:cursor-pointer w-[500px] flex flex-col bg-black">
+      <div className="absolute flex bottom-0 right-0 hover:cursor-pointer w-[500px] flex flex-col bg-black">
         <button
           onClick={() => {
             setIsMessageOpen((prev) => !prev);
@@ -247,22 +279,22 @@ const Home = ({ user }) => {
         >
           <div
             className={classnames(
-              'border-x-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
+              'border-l-[1px] border-t-[1px] border-solid border-[#252525] px-5 py-3 flex justify-between items-center',
               { 'border-b-[1px]': isMessageOpen },
             )}
           >
-            <div className="flex items-center gap-x-3">
+            <div className="flex flex-row items-center justify-between gap-x-3 w-full pr-6">
               <p>Messages</p>
-              <button className="border-[1px] border-solid border-[#252525] px-4 py-1" onClick={subscribe}>
+              <button className="bg-primary text-white px-4 py-1" onClick={subscribe}>
                 Subscribe
               </button>
             </div>
-            <TfiClose />
+            {isMessageOpen ? <TfiClose /> : <TfiArrowCircleDown />}
           </div>
         </button>
         {isMessageOpen && (
-          <div className="border-x-[1px] border-solid border-[#252525] h-[400px] px-5 py-3 overflow-auto">
-            {messages.map(({ message: { body } }) => {
+          <div className="border-x-[1px] border-solid border-[#252525] h-[400px] p-6 overflow-auto bg-[#131313] gap-3">
+            {messages?.map(({ message: { body } }) => {
               if (body[0] !== '{') return;
 
               const parsedMessage = JSON.parse(body);
@@ -272,10 +304,10 @@ const Home = ({ user }) => {
               const time = new Date(parsedMessage.timestamp * 1000);
 
               return (
-                <div className="border-[1px] border-solid border-[#252525] max-w-[400px] p-2 mb-3">
+                <div className="border-[1px] border-solid border-[#252525] py-2 px-4 bg-black">
                   <p className="font-bold">{bounties?.filter(({ bountyId }) => bountyId === body.bountyId)[0]?.name}</p>
-                  <p className="">Based on your verified traits, you are elligible to join this bounty!</p>
-                  <p className="text-xs pt-3">{time.toLocaleString()}</p>
+                  <p className="">Based on your verified traits, you are eligible to join this bounty!</p>
+                  <p className="text-xs pt-3 text-white/60">{time.toLocaleString()}</p>
                 </div>
               );
             })}

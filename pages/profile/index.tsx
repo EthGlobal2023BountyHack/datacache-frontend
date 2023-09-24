@@ -137,7 +137,7 @@ export default function Profile() {
         </Dialog>
 
         {user ? (
-          <div className="flex w-full h-full flex-col p-10 space-y-4">
+          <div className="flex w-full h-full flex-col px-6 lg:px-10 space-y-4 py-6">
             <h1 className="text-3xl font-bold">Profile</h1>
             <h2 className="text-xl underline">Wallet Insights</h2>
             <div className="flex flex-col space-y-2">

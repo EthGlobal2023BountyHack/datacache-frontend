@@ -107,7 +107,9 @@ const Dashboard = ({ user }) => {
         </button>
         <div className={classnames('flex gap-3 flex-wrap', { 'justify-center': bounties?.length === 0 })}>
           {filteredBounties?.map((bounty) => <BountyCard bounty={bounty} />)}
-          {filteredBounties?.length === 0 && query === '' && <div className="">You have no bounties yet</div>}
+          {filteredBounties?.length === 0 && query === '' && (
+            <div className="text-white/60">You have no bounties yet</div>
+          )}
         </div>
       </section>
       {showModal && (

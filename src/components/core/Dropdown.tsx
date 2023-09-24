@@ -30,11 +30,11 @@ const Dropdown = ({ text, options = [], className = '', ...rest }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full w-full border-x-[1px] border-b-[1px] border-solid border-[#252525] bg-primary-dark bg-black">
+        <div className="absolute top-full w-full border-x-[1px] border-b-[1px] border-solid border-[#252525] bg-black">
           {options.map((option, index) => (
             <button
               key={index}
-              className="w-full text-left px-4 py-2 hover:bg-gray-100 hover:text-black"
+              className="w-full text-left px-4 py-2 hover:text-primary"
               onClick={() => {
                 setIsOpen(false);
                 option.callback && option.callback();

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import classnames from 'classnames';
 import { useDisconnect, useNetwork } from 'wagmi';
-import { useScroll, Image, Button } from '@components';
+import { useScroll, Image, Button, Link } from '@components';
 import { ErrorBoundary } from 'react-error-boundary';
 import { UserContext } from '@/context/UserContext';
 import { MdNotifications as BellIcon, MdMenu as HamburgerMenu } from 'react-icons/md';
@@ -70,6 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
   const handleLogOut = () => {
     disconnect();
     setUser({});
+    router.push('/api/auth/logout');
   };
 
   const { chain: currentChain } = useNetwork();
@@ -83,9 +84,10 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
         )}
       >
         {/* Left Section */}
-        <div className="flex shrink-0 w-1/2 sm:w-1/4">
+        <Link href="/" className="flex flex-row items-center space-x-1 shrink-0 w-1/2 sm:w-1/4">
+          <Image src="/logo.png" alt="logo datacache" height={50} width={50} />
           <h1 className="uppercase text-lg font-black">Datacache</h1>
-        </div>
+        </Link>
         {/* Center Section */}
         <div className="hidden lg:flex justify-center flex-grow w-1/2 gap-5 h-[50px]">
           <button
@@ -125,7 +127,7 @@ const Navbar: React.FC<NavbarProps> = ({ isHeaderTransparent = false, openLoginM
                 text={
                   <div className="relative flex flex-col jusitfy-center h-full w-full">
                     <span className="absolute top-[-15px] left-0 text-center text-white/60 text-[12px] z-[2]">
-                      {currentChain?.name || 'N/A'}
+                      {currentChain?.name || 'Unknown Network'}
                     </span>
                     <span className="truncate w-full">
                       {user?.displayName || truncate(user?.ethAddress) || user?.email}
